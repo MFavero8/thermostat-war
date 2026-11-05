@@ -1,9 +1,10 @@
 # Ending the ‘thermostat wars’: a Bayesian causal framework for thermal comfort decision-making under occupant heterogeneity and uncertainty
 
-**Matteo Favero<sup>1</sup>, Marika Vellei<sup>2,3</sup>, Andrew Sonta<sup>1</sup>**
+**Matteo Favero<sup>1</sup>, Marika Vellei<sup>2,3</sup>, Andrew Sonta<sup>1</sup>**\
 <sup>1</sup> ETHOS Lab, École Polytechnique Fédérale de Lausanne (EPFL), Lausanne, Switzerland\
 <sup>2</sup> Univ. Bordeaux, CNRS, Bordeaux INP, I2M, UMR 5295, F-33400, Talence, France\
 <sup>3</sup> Arts et Metiers Institute of Technology, CNRS, Bordeaux INP, Hesam Universite, I2M, UMR 5295, F-33400 Talence, France
+
 
 ---
 
@@ -55,7 +56,7 @@ The repository is organized as follows:
 
 The analysis runs in two stages:
 
-### Stage 1 --- Statistical analysis (R)
+### Stage 1 - Statistical analysis (R)
 
 #### Project configuration
 
@@ -128,7 +129,7 @@ The analysis runs in two stages:
 | `scripts/11/cost_schemes.R` | Defines the utility or cost schemes used to calculate the UWTDI. |
 | `scripts/11/visualisation_setting.R` | Defines visualisation settings for UWTDI analyses. |
 
-### Stage 2 --- Manuscript rendering
+### Stage 2 - Manuscript rendering
 
 The rendering process of the entire Quarto project, including the main article (`index.qmd`) and all supplementary documents, can be launched from the RStudio Terminal by typing `render-all.bat`.
 
