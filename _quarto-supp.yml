@@ -1,0 +1,13 @@
+project:
+  type: default
+
+format:
+  html:
+    toc: true
+    number-sections: true
+    theme:
+      - cosmo
+    css: ../styles.css  
+    code-fold: true
+    code-tools: false
+    

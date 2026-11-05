@@ -1,0 +1,78 @@
+{
+  "index.qmd": {
+    "index.html": "174f85ad",
+    "index.embed.ipynb": "8a5b9792",
+    "index.out.ipynb": "31d8cee1",
+    "index-preview.html": "610ad04f"
+  },
+  "prior-predictive-checks.qmd": {
+    "prior-predictive-checks-preview.html": "d42d3887",
+    "prior-predictive-checks.embed.ipynb": "36da0616",
+    "prior-predictive-checks.out.ipynb": "60322454"
+  },
+  "posterior-predictive-checks.qmd": {
+    "posterior-predictive-checks-preview.html": "b76f30d6",
+    "posterior-predictive-checks.embed.ipynb": "eeaa289d",
+    "posterior-predictive-checks.out.ipynb": "670b547a"
+  },
+  "model-sensitivity.qmd": {
+    "model-sensitivity-preview.html": "f2cfed5c",
+    "model-sensitivity.embed.ipynb": "6cd305df",
+    "model-sensitivity.out.ipynb": "39578067"
+  },
+  "supplementary-material.qmd": {
+    "supplementary-material.embed.ipynb": "59f78e05",
+    "supplementary-material.out.ipynb": "45a2fe4e",
+    "supplementary-material-preview.html": "5ab8cbe2"
+  },
+  "model-specification.qmd": {
+    "model-specification-preview.html": "8fc89b55",
+    "model-specification.embed.ipynb": "ffb54683",
+    "model-specification.out.ipynb": "ee4516e9"
+  },
+  "model-development-and-specification.qmd": {
+    "model-development-and-specification.html": "b692f490",
+    "model-development-and-specification-preview.html": "8dcb924e",
+    "model-development-and-specification.embed.ipynb": "8ff60229",
+    "model-development-and-specification.out.ipynb": "02144633"
+  },
+  "notebooks/supplementary-material.qmd": {
+    "supplementary-material-preview.html": "d454c00d",
+    "supplementary-material.embed.ipynb": "80dda0c8",
+    "supplementary-material.out.ipynb": "881da341"
+  },
+  "notebooks/model-development-and-specification.qmd": {
+    "model-development-and-specification-preview.html": "83a54c25",
+    "model-development-and-specification.embed.ipynb": "7edd4bfd",
+    "model-development-and-specification.out.ipynb": "3afa1286"
+  },
+  "notebooks/prior-predictive-checks.qmd": {
+    "prior-predictive-checks-preview.html": "5f6a6385",
+    "prior-predictive-checks.embed.ipynb": "01b6247e",
+    "prior-predictive-checks.out.ipynb": "b8f82313",
+    "prior-predictive-checks.html": "60d88e81"
+  },
+  "notebooks/posterior-predictive-checks.qmd": {
+    "posterior-predictive-checks-preview.html": "7e773872",
+    "posterior-predictive-checks.embed.ipynb": "c9d9881f",
+    "posterior-predictive-checks.out.ipynb": "0d0483ce"
+  },
+  "notebooks/model-sensitivity.qmd": {
+    "model-sensitivity-preview.html": "3a69e231"
+  },
+  "supporting/posterior-predictive-checks.qmd": {
+    "posterior-predictive-checks.html": "f5c67d08"
+  },
+  "supporting/model-development-and-specification.qmd": {
+    "model-development-and-specification.html": "a57ed455"
+  },
+  "supporting/prior-predictive-checks.qmd": {
+    "prior-predictive-checks.html": "6036a0ed"
+  },
+  "supporting/model-sensitivity.qmd": {
+    "model-sensitivity.html": "4498299c"
+  },
+  "README.md": {
+    "README.html": "d17464fa"
+  }
+}

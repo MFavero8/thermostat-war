@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Model selection and specification</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="model-development-and-specification_files/libs/clipboard/clipboard.min.js"></script>
+<script src="model-development-and-specification_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="model-development-and-specification_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="model-development-and-specification_files/libs/quarto-html/popper.min.js"></script>
+<script src="model-development-and-specification_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="model-development-and-specification_files/libs/quarto-html/anchor.min.js"></script>
+<link href="model-development-and-specification_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="model-development-and-specification_files/libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="model-development-and-specification_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="model-development-and-specification_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="model-development-and-specification_files/libs/bootstrap/bootstrap-1ea445cae72b723d9bfb50b01b6c1011.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#model-selection" id="toc-model-selection" class="nav-link active" data-scroll-target="#model-selection"><span class="header-section-number">1</span> Model selection</a></li>
+  <li><a href="#candidate-models" id="toc-candidate-models" class="nav-link" data-scroll-target="#candidate-models"><span class="header-section-number">2</span> Candidate models</a>
+  <ul class="collapse">
+  <li><a href="#model-comparison" id="toc-model-comparison" class="nav-link" data-scroll-target="#model-comparison"><span class="header-section-number">2.1</span> Model comparison</a></li>
+  <li><a href="#selected-model" id="toc-selected-model" class="nav-link" data-scroll-target="#selected-model"><span class="header-section-number">2.2</span> Selected model</a></li>
+  </ul></li>
+  <li><a href="#model-specification" id="toc-model-specification" class="nav-link" data-scroll-target="#model-specification"><span class="header-section-number">3</span> Model specification</a>
+  <ul class="collapse">
+  <li><a href="#multinomial-logit-model" id="toc-multinomial-logit-model" class="nav-link" data-scroll-target="#multinomial-logit-model"><span class="header-section-number">3.1</span> Multinomial logit model</a></li>
+  <li><a href="#multilevel-structure" id="toc-multilevel-structure" class="nav-link" data-scroll-target="#multilevel-structure"><span class="header-section-number">3.2</span> Multilevel structure</a></li>
+  <li><a href="#monotonic-effect-of-time-since-onset" id="toc-monotonic-effect-of-time-since-onset" class="nav-link" data-scroll-target="#monotonic-effect-of-time-since-onset"><span class="header-section-number">3.3</span> Monotonic effect of time since onset</a></li>
+  <li><a href="#prior-specification" id="toc-prior-specification" class="nav-link" data-scroll-target="#prior-specification"><span class="header-section-number">3.4</span> Prior specification</a></li>
+  <li><a href="#hyperpriors-specification" id="toc-hyperpriors-specification" class="nav-link" data-scroll-target="#hyperpriors-specification"><span class="header-section-number">3.5</span> Hyperpriors specification</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Model selection and specification</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<nav class="supp-navbar">
+<a href="javascript:history.back()" class="supp-back"> ‹ Back to Article </a>
+</nav>
+<section id="model-selection" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Model selection</h1>
+</section>
+<section id="candidate-models" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Candidate models</h1>
+<p>We considered eight candidate models, starting with a baseline model and progressively adding interaction terms. The candidate models differed in their inclusion of interactions between biological sex, air temperature, and relative humidity. This approach allowed us to assess whether these interactions improved model predictive performance. An overview of the candidate models and their respective interaction terms is provided in <a href="#tbl-candidate-models">Table 1</a>.</p>
+<p><strong>Table 1. Overview of the candidate models.</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 66%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Model</th>
+<th style="text-align: left;">Interaction terms</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>mod_00</code></td>
+<td style="text-align: left;">None (baseline)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>mod_01</code></td>
+<td style="text-align: left;">Air temperature × relative humidity</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>mod_02</code></td>
+<td style="text-align: left;">Sex × air temperature</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>mod_03</code></td>
+<td style="text-align: left;">Sex × relative humidity</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>mod_04</code></td>
+<td style="text-align: left;">Sex × air temperature; air temperature × relative humidity</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>mod_05</code></td>
+<td style="text-align: left;">Sex × relative humidity; air temperature × relative humidity</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>mod_06</code></td>
+<td style="text-align: left;">Sex × air temperature; sex × relative humidity</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>mod_07</code></td>
+<td style="text-align: left;">Sex × air temperature; sex × relative humidity; air temperature × relative humidity</td>
+</tr>
+</tbody>
+</table>
+<section id="model-comparison" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="model-comparison"><span class="header-section-number">2.1</span> Model comparison</h2>
+<p>We initially compared the predictive performance of the eight candidate models using approximate leave-one-out cross-validation (PSIS-LOO), based on the expected log pointwise predictive density (ELPD) (<a href="#tbl-loo-comparison">Table 2</a>). Higher ELPD values indicate better expected predictive performance. The reliability of the PSIS-LOO estimates was assessed using Pareto-<span class="math inline">\(k\)</span> diagnostics.</p>
+<p><strong>Table 2. Comparison of candidate models based on approximate leave-one-out cross-validation (LOO).</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 16%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 12%">
+<col style="width: 31%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Model</th>
+<th style="text-align: right;">ELPD diff.</th>
+<th style="text-align: right;">SE diff.</th>
+<th style="text-align: right;">ELPD LOO</th>
+<th style="text-align: right;">SE ELPD</th>
+<th style="text-align: left;">Pareto-<span class="math inline">\(k\)</span> diagnostic</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>mod_01</code></td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">-2320.52</td>
+<td style="text-align: right;">33.03</td>
+<td style="text-align: left;">8 observations &gt; 0.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>mod_05</code></td>
+<td style="text-align: right;">-0.562</td>
+<td style="text-align: right;">2.381</td>
+<td style="text-align: right;">-2321.08</td>
+<td style="text-align: right;">32.95</td>
+<td style="text-align: left;">5 observations &gt; 0.7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>mod_07</code></td>
+<td style="text-align: right;">-0.568</td>
+<td style="text-align: right;">2.619</td>
+<td style="text-align: right;">-2321.09</td>
+<td style="text-align: right;">33.08</td>
+<td style="text-align: left;">7 observations &gt; 0.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>mod_04</code></td>
+<td style="text-align: right;">-0.917</td>
+<td style="text-align: right;">1.179</td>
+<td style="text-align: right;">-2321.43</td>
+<td style="text-align: right;">33.16</td>
+<td style="text-align: left;">7 observations &gt; 0.7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>mod_00</code></td>
+<td style="text-align: right;">-1.987</td>
+<td style="text-align: right;">3.829</td>
+<td style="text-align: right;">-2322.50</td>
+<td style="text-align: right;">33.92</td>
+<td style="text-align: left;">7 observations &gt; 0.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>mod_03</code></td>
+<td style="text-align: right;">-2.242</td>
+<td style="text-align: right;">4.019</td>
+<td style="text-align: right;">-2322.76</td>
+<td style="text-align: right;">33.74</td>
+<td style="text-align: left;">4 observations &gt; 0.7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>mod_06</code></td>
+<td style="text-align: right;">-3.596</td>
+<td style="text-align: right;">4.114</td>
+<td style="text-align: right;">-2324.11</td>
+<td style="text-align: right;">33.86</td>
+<td style="text-align: left;">4 observations &gt; 0.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>mod_02</code></td>
+<td style="text-align: right;">-4.178</td>
+<td style="text-align: right;">3.861</td>
+<td style="text-align: right;">-2324.70</td>
+<td style="text-align: right;">34.01</td>
+<td style="text-align: left;">7 observations &gt; 0.7</td>
+</tr>
+</tbody>
+</table>
+<p>The PSIS-LOO comparison ranked <code>mod_01</code> highest, with an ELPD of -2320.52 (SE = 33.03). However, the Pareto-<span class="math inline">\(k\)</span> diagnostics indicated potential reliability issues, as all eight models had between 4 and 8 observations with Pareto-<span class="math inline">\(k\)</span> values exceeding 0.7. Therefore, the PSIS-LOO estimates warranted additional assessment.</p>
+<p>We consequently performed stratified 10-fold cross-validation, using <code>condition_id</code> to stratify the folds. Predictive performance was evaluated on held-out observations, providing an additional assessment of the candidate models. The results are presented in <a href="#tbl-kfold-comparison">Table 3</a>.</p>
+<p><strong>Table 3. Comparison of candidate models based on stratified 10-fold cross-validation.</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Model</th>
+<th style="text-align: right;">ELPD diff.</th>
+<th style="text-align: right;">SE diff.</th>
+<th style="text-align: right;">ELPD</th>
+<th style="text-align: right;">SE ELPD</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>mod_01</code></td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">-2326.69</td>
+<td style="text-align: right;">33.67</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>mod_05</code></td>
+<td style="text-align: right;">-0.163</td>
+<td style="text-align: right;">2.496</td>
+<td style="text-align: right;">-2326.86</td>
+<td style="text-align: right;">33.48</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>mod_04</code></td>
+<td style="text-align: right;">-1.735</td>
+<td style="text-align: right;">1.241</td>
+<td style="text-align: right;">-2328.43</td>
+<td style="text-align: right;">33.89</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>mod_07</code></td>
+<td style="text-align: right;">-2.214</td>
+<td style="text-align: right;">2.816</td>
+<td style="text-align: right;">-2328.91</td>
+<td style="text-align: right;">33.77</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>mod_00</code></td>
+<td style="text-align: right;">-3.377</td>
+<td style="text-align: right;">3.307</td>
+<td style="text-align: right;">-2330.07</td>
+<td style="text-align: right;">34.56</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>mod_03</code></td>
+<td style="text-align: right;">-3.700</td>
+<td style="text-align: right;">3.951</td>
+<td style="text-align: right;">-2330.39</td>
+<td style="text-align: right;">34.41</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>mod_02</code></td>
+<td style="text-align: right;">-5.361</td>
+<td style="text-align: right;">3.654</td>
+<td style="text-align: right;">-2332.06</td>
+<td style="text-align: right;">34.83</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>mod_06</code></td>
+<td style="text-align: right;">-5.604</td>
+<td style="text-align: right;">4.151</td>
+<td style="text-align: right;">-2332.30</td>
+<td style="text-align: right;">34.62</td>
+</tr>
+</tbody>
+</table>
+<p>The stratified 10-fold cross-validation results also ranked <code>mod_01</code> highest, with an ELPD of -2326.69 (SE = 33.67). However, the differences in predictive performance between the leading models were relatively small compared with their standard errors. In particular, <code>mod_05</code> had an ELPD difference of only -0.16 (SE = 2.50), indicating very similar estimated predictive performance to <code>mod_01</code>.</p>
+</section>
+<section id="selected-model" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="selected-model"><span class="header-section-number">2.2</span> Selected model</h2>
+<p>Based on the model comparisons, we selected <code>mod_01</code> as the final model. This model achieved the highest estimated predictive performance under both PSIS-LOO and stratified 10-fold cross-validation. The consistency between the two approaches was further supported by a very strong positive correlation between their model rankings (Spearman’s <span class="math inline">\(\rho\)</span> = 0.952, <span class="math inline">\(p\)</span> &lt; 0.001, <span class="math inline">\(n\)</span> = 8).</p>
+<p>Although <code>mod_01</code> ranked first under both approaches, its predictive performance was not clearly distinguishable from that of some alternative models, particularly <code>mod_05</code>. The small differences in ELPD relative to their standard errors suggest that several candidate models had broadly similar predictive performance. Nevertheless, the consistent ranking across both comparison methods supported the selection of <code>mod_01</code>.</p>
+<p>The selected model included an interaction between air temperature and relative humidity, in addition to the main effects and the condition-varying effects. Its full specification and prior distributions are described in the following sections.</p>
+</section>
+</section>
+<section id="model-specification" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Model specification</h1>
+<section id="multinomial-logit-model" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="multinomial-logit-model"><span class="header-section-number">3.1</span> Multinomial logit model</h2>
+<p>Thermal sensation votes (TSV) were recorded on a seven-point ordinal scale ranging from <span class="math inline">\(-3\)</span> (cold) to <span class="math inline">\(+3\)</span> (hot), with <span class="math inline">\(0\)</span> representing the comfortable category. The data consist of 720 observations across 72 experimental conditions. Each observation represents the TSV counts of five participants of the same biological sex under a given combination of experimental conditions.</p>
+<p>Because individual participant identifiers were unavailable, the model was fitted to aggregated category counts rather than individual-level repeated measurements. The response for observation <span class="math inline">\(i\)</span> is represented by a seven-dimensional count vector:</p>
+<p><span class="math display">\[
+\mathbf Y_i =
+(Y_{i,-3},Y_{i,-2},Y_{i,-1},Y_{i,0},Y_{i,+1},Y_{i,+2},Y_{i,+3})
+\tag{1}
+\]</span></p>
+<p>where the counts sum to five:</p>
+<p><span class="math display">\[
+\sum_{k=-3}^{+3}Y_{i,k}=5
+\tag{2}
+\]</span></p>
+<p>The response vector is modelled using a multinomial likelihood:</p>
+<p><span class="math display">\[
+\mathbf Y_i
+\sim
+\operatorname{Multinomial}
+\left(5,\mathbf p_i\right)
+\tag{3}
+\]</span></p>
+<p>where <span class="math inline">\(\mathbf p_i\)</span> is the vector of probabilities for the seven TSV categories.</p>
+<p>The comfortable category (<span class="math inline">\(\mathrm{TSV}=0\)</span>) is used as the reference category. Its linear predictor is fixed to zero:</p>
+<p><span class="math display">\[
+\eta_{i,0}=0
+\tag{4}
+\]</span></p>
+<p>For the six non-reference categories, the category probabilities are obtained through the softmax transformation:</p>
+<p><span class="math display">\[
+p_{i,k}
+=
+\frac{\exp(\eta_{i,k})}
+{1+\displaystyle\sum_{\ell\in\mathcal K}\exp(\eta_{i,\ell})},
+\qquad
+k\in\mathcal K
+\tag{5}
+\]</span></p>
+<p>where <span class="math inline">\(\mathcal K=\{-3,-2,-1,+1,+2,+3\}\)</span>.</p>
+<p>The probability of the comfortable category is consequently</p>
+<p><span class="math display">\[
+p_{i,0}
+=
+\frac{1}
+{1+\displaystyle\sum_{\ell\in\mathcal K}
+\exp(\eta_{i,\ell})}
+\tag{6}
+\]</span></p>
+<p>The linear predictor for each non-reference category <span class="math inline">\(k\)</span> is specified as</p>
+<p><span class="math display">\[
+\begin{aligned}
+\eta_{i,k} =&amp; \
+\alpha_{\mathrm{condition}[i],\mathrm{sex}[i],k} + \beta_{\mathrm{condition}[i],\mathrm{t.onset},k}
+\operatorname{mo}_k(\mathrm{t.onset}_i) + \beta_{\mathrm{t.day},k}\mathrm{t.day}_i \\
+&amp;+ \beta_{\mathrm{temp},k}\mathrm{temp}_i + \beta_{\mathrm{hum},k}\mathrm{hum}_i + \beta_{\mathrm{temp.hum},k}(\mathrm{temp}_i\mathrm{hum}_i)
+\end{aligned}
+\tag{7}
+\]</span></p>
+<p>Here, <span class="math inline">\(k\)</span> indexes the non-reference TSV categories, <span class="math inline">\(\mathrm{sex}[i]\)</span> identifies the biological sex of observation <span class="math inline">\(i\)</span>, and <span class="math inline">\(\mathrm{condition}[i]\)</span> identifies its experimental condition. The variable <span class="math inline">\(\mathrm{t.day}_{i}\)</span> represents the time-of-day indicator (afternoon/evening), while <span class="math inline">\(\mathrm{t.onset}_i\)</span> denotes the ordered level of time since onset for observation <span class="math inline">\(i\)</span>, and <span class="math inline">\(\operatorname{mo}_k(\mathrm{t.onset}_i)\)</span> represents its category-specific monotonic effect. The variable <span class="math inline">\(\mathrm{temp}_{i}\)</span> is centred air temperature, and <span class="math inline">\(\mathrm{hum}_{i}\)</span> is centred relative humidity expressed in 5% units. The temperature–humidity interaction is represented by their product.</p>
+</section>
+<section id="multilevel-structure" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="multilevel-structure"><span class="header-section-number">3.2</span> Multilevel structure</h2>
+<p><a id="eq-onset-decomposition" href=""></a></p>
+<p>The sex coefficients and the monotonic time-since-onset coefficients are allowed to vary across experimental conditions. The condition-specific effects are decomposed into a constant (population-level) and condition-specific deviations:</p>
+<p><span class="math display">\[
+\alpha_{\mathrm{condition}[i],\mathrm{sex}[i],k} = \bar{\alpha}_{\mathrm{sex}[i],k} + v_{\mathrm{condition}[i],\mathrm{sex}[i],k}
+\tag{8}
+\]</span></p>
+<p><span class="math display">\[
+\beta_{\mathrm{condition}[i],\mathrm{t.onset},k} = \bar{\beta}_{\mathrm{t.onset},k} + v_{\mathrm{condition}[i],\mathrm{t.onset},k}
+\tag{9}
+\]</span></p>
+<p>Here, <span class="math inline">\(\bar{\alpha}_{\mathrm{sex}[i],k}\)</span> and <span class="math inline">\(\bar{\beta}_{\mathrm{t.onset},k}\)</span> represent the constant (population-level) coefficients for the corresponding sex and monotonic time-since-onset effect, respectively. The terms <span class="math inline">\(v_{\mathrm{condition}[i],\mathrm{sex}[i],k}\)</span> and <span class="math inline">\(v_{\mathrm{condition}[i],\mathrm{t.onset},k}\)</span> represent condition-specific deviations from these constant (population-level) coefficients. This hierarchical structure allows partial pooling across experimental conditions.</p>
+<p>The condition-varying effects are jointly modelled. For each condition <span class="math inline">\(j\)</span> (with <span class="math inline">\(j=1,\ldots,72\)</span> indexing the 72 experimental conditions), the vector of deviations is defined as</p>
+<p><a id="eq-random-effects" href=""></a></p>
+<p><span class="math display">\[
+\begin{aligned}
+\mathbf v_j = (&amp;
+v_{j,\mathrm{male},-3},
+v_{j,\mathrm{female},-3},
+v_{j,\mathrm{t.onset},-3},
+\\
+&amp;
+v_{j,\mathrm{male},-2},
+v_{j,\mathrm{female},-2},
+v_{j,\mathrm{t.onset},-2},
+\\
+&amp;
+v_{j,\mathrm{male},-1},
+v_{j,\mathrm{female},-1},
+v_{j,\mathrm{t.onset},-1},
+\\
+&amp;
+v_{j,\mathrm{male},+1},
+v_{j,\mathrm{female},+1},
+v_{j,\mathrm{t.onset},+1},
+\\
+&amp;
+v_{j,\mathrm{male},+2},
+v_{j,\mathrm{female},+2},
+v_{j,\mathrm{t.onset},+2},
+\\
+&amp;
+v_{j,\mathrm{male},+3},
+v_{j,\mathrm{female},+3},
+v_{j,\mathrm{t.onset},+3}
+)^\mathsf T
+\end{aligned}
+\tag{10}
+\]</span></p>
+<p>Thus, each condition has a vector of 18 condition-varying effects, jointly modelled according to</p>
+<p><span class="math display">\[
+\mathbf v_j
+\sim
+\operatorname{MVN}
+\left(
+\mathbf 0,\boldsymbol\Sigma
+\right),
+\qquad j=1,\ldots,72
+\tag{11}
+\]</span></p>
+<p>where <span class="math inline">\(\boldsymbol\Sigma\)</span> is an <span class="math inline">\(18\times18\)</span> covariance matrix. This structure allows correlations between condition-varying effects across sexes, monotonic onset coefficients, and TSV categories.</p>
+<section id="non-centred-parameterisation" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="non-centred-parameterisation"><span class="header-section-number">3.2.1</span> Non-centred parameterisation</h3>
+<p>For computational efficiency, the multivariate normal distribution of the condition-varying effects is implemented using a non-centred parameterisation. First, the standardised condition effects are defined as</p>
+<p><span class="math display">\[
+\mathbf z_j
+\sim
+\operatorname{MVN}
+\left(
+\mathbf 0,\mathbf I
+\right),
+\qquad j=1,\ldots,72
+\tag{12}
+\]</span></p>
+<p>where <span class="math inline">\(\mathbf I\)</span> is the <span class="math inline">\(18\times18\)</span> identity matrix.</p>
+<p>The condition-varying effects are then obtained through the transformation</p>
+<p><span class="math display">\[
+\mathbf v_j
+=
+\mathbf D_{\sigma}
+\mathbf L_{\Omega}
+\mathbf z_j,
+\qquad j=1,\ldots,72
+\tag{13}
+\]</span></p>
+<p>where <span class="math inline">\(\mathbf D_{\sigma}\)</span> is a diagonal matrix containing the group-level standard deviations, and <span class="math inline">\(\mathbf L_{\Omega}\)</span> is the Cholesky factor of the correlation matrix <span class="math inline">\(\boldsymbol\Omega\)</span>.</p>
+<p>The covariance matrix is therefore expressed as</p>
+<p><span class="math display">\[
+\boldsymbol\Sigma
+=
+\mathbf D_{\sigma}
+\boldsymbol\Omega
+\mathbf D_{\sigma},
+\qquad
+\boldsymbol\Omega
+=
+\mathbf L_{\Omega}
+\mathbf L_{\Omega}^{\mathsf T}
+\tag{14}
+\]</span></p>
+<p>This parameterisation ensures that the condition-varying effects follow the multivariate normal distribution specified in <a href="#eq-random-effects">Equation (11)</a>.</p>
+</section>
+</section>
+<section id="monotonic-effect-of-time-since-onset" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="monotonic-effect-of-time-since-onset"><span class="header-section-number">3.3</span> Monotonic effect of time since onset</h2>
+<p>The effect of time since onset is modelled as a monotonic effect rather than assuming equal spacing between its ordered levels. Let <span class="math inline">\(D\)</span> denote the number of ordered levels of time since onset, and let <span class="math inline">\(\mathrm{t.onset}_i\in\{1,\ldots,D\}\)</span> denote the corresponding level for observation <span class="math inline">\(i\)</span>. For each non-reference TSV category <span class="math inline">\(k\)</span>, the monotonic effect is defined as</p>
+<p><span class="math display">\[
+\operatorname{mo}_k(\mathrm{t.onset}_i)
+=
+(D-1)
+\sum_{d=1}^{D-1}
+\zeta_{k,d}\mathbb I(\mathrm{t.onset}_i&gt;d)
+\tag{15}
+\]</span></p>
+<p>where <span class="math inline">\(\mathbb I(\cdot)\)</span> is the indicator function and <span class="math inline">\(\boldsymbol\zeta_k\)</span> is a category-specific simplex vector.</p>
+<p>The simplex weights satisfy</p>
+<p><span class="math display">\[
+\zeta_{k,d}\geq0,
+\qquad
+\sum_{d=1}^{D-1}\zeta_{k,d}=1
+\tag{16}
+\]</span></p>
+<p>The simplex weights determine how the overall monotonic effect is distributed across successive levels of time since onset. The scaling factor <span class="math inline">\(D-1\)</span> ensures that the monotonic effect ranges from zero at the first level to <span class="math inline">\(D-1\)</span> at the final level.</p>
+<p>Each non-reference TSV category has its own simplex vector:</p>
+<p><span class="math display">\[
+\boldsymbol\zeta_k
+\sim
+\operatorname{Dirichlet}
+(\boldsymbol\gamma_k),
+\qquad
+k\in\mathcal K
+\tag{17}
+\]</span></p>
+<p>where <span class="math inline">\(\boldsymbol\gamma_k\)</span> denotes the vector of prior concentration parameters for category <span class="math inline">\(k\)</span>.</p>
+<p>The simplex weights are category-specific but are shared across experimental conditions. Condition-specific variation in the time-since-onset effect is captured by the corresponding condition-varying regression coefficient in <a href="#eq-onset-decomposition">Equation (9)</a>.</p>
+</section>
+<section id="prior-specification" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="prior-specification"><span class="header-section-number">3.4</span> Prior specification</h2>
+<section id="biological-sex" class="level4">
+<h4 class="anchored" data-anchor-id="biological-sex">Biological sex</h4>
+<p>The sex-specific baseline coefficients have category-dependent prior means:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\bar\alpha_{\mathrm{male}, -3},\bar\alpha_{\mathrm{female}, -3}
+&amp;\sim
+\operatorname{Normal}(-2.69,2)\\
+\bar\alpha_{\mathrm{male}, -2},\bar\alpha_{\mathrm{female}, -2}
+&amp;\sim
+\operatorname{Normal}(-1.84,2)\\
+\bar\alpha_{\mathrm{male}, -1},\bar\alpha_{\mathrm{female}, -1}
+&amp;\sim
+\operatorname{Normal}(-0.89,2) \\
+\bar\alpha_{\mathrm{male}, 1},\bar\alpha_{\mathrm{female}, 1}
+&amp;\sim
+\operatorname{Normal}(-0.89,2) \\
+\bar\alpha_{\mathrm{male}, 2},\bar\alpha_{\mathrm{female}, 2}
+&amp;\sim
+\operatorname{Normal}(-1.84,2)\\
+\bar\alpha_{\mathrm{male}, 3},\bar\alpha_{\mathrm{female}, 3}
+&amp;\sim
+\operatorname{Normal}(-2.69,2)
+\end{aligned}
+\tag{18}
+\]</span></p>
+</section>
+<section id="time-since-onset" class="level4">
+<h4 class="anchored" data-anchor-id="time-since-onset">Time since onset</h4>
+<p>The monotonic time since onset coefficients have the prior:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\bar\beta_{\mathrm{t.onset}, -3}
+&amp;\sim
+\operatorname{Normal}(0,0.25)\\
+\bar\beta_{\mathrm{t.onset}, -2}
+&amp;\sim
+\operatorname{Normal}(0,0.25)\\
+\bar\beta_{\mathrm{t.onset}, -1}
+&amp;\sim
+\operatorname{Normal}(0,0.25)\\
+\bar\beta_{\mathrm{t.onset}, 1}
+&amp;\sim
+\operatorname{Normal}(0,0.25)\\
+\bar\beta_{\mathrm{t.onset}, 2}
+&amp;\sim
+\operatorname{Normal}(0,0.25)\\
+\bar\beta_{\mathrm{t.onset}, 3}
+&amp;\sim
+\operatorname{Normal}(0,0.25)
+\end{aligned}
+\tag{19}
+\]</span></p>
+<p>Each non-reference TSV category has its own simplex parameter:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\boldsymbol{\zeta}_{-3}
+\sim
+\operatorname{Dirichlet}(2,2,2,2)\\
+\boldsymbol{\zeta}_{-2}
+\sim
+\operatorname{Dirichlet}(2,2,2,2)\\
+\boldsymbol{\zeta}_{-1}
+\sim
+\operatorname{Dirichlet}(2,2,2,2)\\
+\boldsymbol{\zeta}_{1}
+\sim
+\operatorname{Dirichlet}(2,2,2,2)\\
+\boldsymbol{\zeta}_{2}
+\sim
+\operatorname{Dirichlet}(2,2,2,2)\\
+\boldsymbol{\zeta}_{3}
+\sim
+\operatorname{Dirichlet}(2,2,2,2)\\
+\end{aligned}
+\tag{20}
+\]</span></p>
+<p>The Dirichlet prior is symmetric, assigning equal prior concentration to each increment of the monotonic effect.</p>
+</section>
+<section id="time-of-day" class="level4">
+<h4 class="anchored" data-anchor-id="time-of-day">Time of day</h4>
+<p>The time-of-day coefficients have the priors:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\beta_{\mathrm{t.day}, -3}
+&amp;\sim
+\operatorname{Normal}(0,0.25)\\
+\beta_{\mathrm{t.day}, -2}
+&amp;\sim
+\operatorname{Normal}(0,0.25)\\
+\beta_{\mathrm{t.day}, -1}
+&amp;\sim
+\operatorname{Normal}(0,0.25)\\
+\beta_{\mathrm{t.day}, 1}
+&amp;\sim
+\operatorname{Normal}(0,0.25)\\
+\beta_{\mathrm{t.day}, 2}
+&amp;\sim
+\operatorname{Normal}(0,0.25)\\
+\beta_{\mathrm{t.day}, 3}
+&amp;\sim
+\operatorname{Normal}(0,0.25)
+\end{aligned}
+\tag{21}
+\]</span></p>
+</section>
+<section id="air-temperature" class="level4">
+<h4 class="anchored" data-anchor-id="air-temperature">Air temperature</h4>
+<p>The air temperature coefficients have the priors:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\beta_{\mathrm{temp}, -3}
+&amp;\sim
+\operatorname{Normal}(-1,0.5)\\
+\beta_{\mathrm{temp}, -2}
+&amp;\sim
+\operatorname{Normal}(-1,0.5)\\
+\beta_{\mathrm{temp}, -1}
+&amp;\sim
+\operatorname{Normal}(-1,0.5)\\
+\beta_{\mathrm{temp}, 1}
+&amp;\sim
+\operatorname{Normal}(1,0.5)\\
+\beta_{\mathrm{temp}, 2}
+&amp;\sim
+\operatorname{Normal}(1,0.5)\\
+\beta_{\mathrm{temp}, 3}
+&amp;\sim
+\operatorname{Normal}(1,0.5)
+\end{aligned}
+\tag{22}
+\]</span></p>
+</section>
+<section id="relative-humidity" class="level4">
+<h4 class="anchored" data-anchor-id="relative-humidity">Relative humidity</h4>
+<p>The relative humidity coefficients have the priors:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\beta_{\mathrm{hum}, -3}
+&amp;\sim
+\operatorname{Normal}(-0.5,0.25)\\
+\beta_{\mathrm{hum}, -2}
+&amp;\sim
+\operatorname{Normal}(-0.5,0.25)\\
+\beta_{\mathrm{hum}, -1}
+&amp;\sim
+\operatorname{Normal}(-0.5,0.25)\\
+\beta_{\mathrm{hum}, 1}
+&amp;\sim
+\operatorname{Normal}(0.5,0.25)\\
+\beta_{\mathrm{hum}, 2}
+&amp;\sim
+\operatorname{Normal}(0.5,0.25)\\
+\beta_{\mathrm{hum}, 3}
+&amp;\sim
+\operatorname{Normal}(0.5,0.25)
+\end{aligned}
+\tag{23}
+\]</span></p>
+</section>
+<section id="air-temperature-and-relative-humidity-interaction" class="level4">
+<h4 class="anchored" data-anchor-id="air-temperature-and-relative-humidity-interaction">Air temperature and relative humidity interaction</h4>
+<p>The air temperature and relative humidity interaction coefficients have the priors:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\beta_{\mathrm{temp.hum}, -3}
+&amp;\sim
+\operatorname{Normal}(0,0.2)\\
+\beta_{\mathrm{temp.hum}, -2}
+&amp;\sim
+\operatorname{Normal}(0,0.2)\\
+\beta_{\mathrm{temp.hum}, -1}
+&amp;\sim
+\operatorname{Normal}(0,0.2)\\
+\beta_{\mathrm{temp.hum}, 1}
+&amp;\sim
+\operatorname{Normal}(0,0.2)\\
+\beta_{\mathrm{temp.hum}, 2}
+&amp;\sim
+\operatorname{Normal}(0,0.2)\\
+\beta_{\mathrm{temp.hum}, 3}
+&amp;\sim
+\operatorname{Normal}(0,0.2)
+\end{aligned}
+\tag{24}
+\]</span></p>
+</section>
+<section id="standardised-condition-specific" class="level4">
+<h4 class="anchored" data-anchor-id="standardised-condition-specific">Standardised condition-specific</h4>
+<p>The standardised effects used in the non-centred parameterisation has amultivariate normal prior:</p>
+<p><span class="math display">\[
+\mathbf z_j
+\sim
+\operatorname{MVN}(\mathbf 0,\mathbf I_{18}),
+\qquad j=1,\ldots,72
+\tag{25}
+\]</span></p>
+</section>
+</section>
+<section id="hyperpriors-specification" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="hyperpriors-specification"><span class="header-section-number">3.5</span> Hyperpriors specification</h2>
+<p>The standard deviations of the condition-varying effects are assigned exponential priors:</p>
+<p><span class="math display">\[
+\sigma_r
+\sim
+\operatorname{Exponential}(1),
+\qquad r=1,\ldots,18
+\tag{26}
+\]</span></p>
+<p>where the index <span class="math inline">\(r\)</span> identifies the 18 dimensions of the condition-varying effects vector.</p>
+<p>The correlation matrix is assigned an LKJ prior:</p>
+<p><span class="math display">\[
+\boldsymbol\Omega
+\sim
+\operatorname{LKJ}(2)
+\tag{27}
+\]</span></p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -1,0 +1,62 @@
+# History files
+.Rhistory
+.Rapp.history
+
+# Session Data files
+.RData
+.RDataTmp
+
+# User-specific files
+.Ruserdata
+
+# Example code in package build process
+*-Ex.R
+
+# Output files from R CMD build
+/*.tar.gz
+
+# Output files from R CMD check
+/*.Rcheck/
+
+# RStudio files
+.Rproj.user/
+
+# produced vignettes
+vignettes/*.html
+vignettes/*.pdf
+
+# OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
+.httr-oauth
+
+# knitr and R markdown default cache directories
+*_cache/
+/cache/
+
+# Temporary files created by R markdown
+*.utf8.md
+*.knit.md
+
+# R Environment Variables
+.Renviron
+
+# translation temp files
+po/*~
+
+# RStudio Connect folder
+rsconnect/
+
+# Ignore contents but keep folder structure
+
+# Prediction chunks
+src/models/predictions/prior_select/mod_01/chunks/*
+!src/models/predictions/prior_select/mod_01/chunks/.gitkeep
+
+src/models/predictions/prior_weak/mod_01/chunks/*
+!src/models/predictions/prior_weak/mod_01/chunks/.gitkeep
+
+# Fitted models
+src/models/fitted/prior_select/*
+!src/models/fitted/prior_select/.gitkeep
+
+src/models/fitted/prior_weak/*
+!src/models/fitted/prior_weak/.gitkeep

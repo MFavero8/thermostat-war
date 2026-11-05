@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="author" content="Matteo Favero">
+<meta name="author" content="Marika Vellei">
+<meta name="author" content="Andrew Sonta">
+<meta name="keywords" content="thermal comfort, Bayesian causal inference, decision-making, thermal equity">
+<title>Ending the ‘thermostat wars’: a Bayesian causal framework for thermal comfort decision-making under occupant heterogeneity and uncertainty</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-1ea445cae72b723d9bfb50b01b6c1011.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet"><script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script><script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script><link rel="stylesheet" href="styles.css">
+<meta name="citation_title" content="Ending the ‘thermostat wars’: a Bayesian causal framework for thermal comfort decision-making under occupant heterogeneity and uncertainty">
+<meta name="citation_abstract" content="Human thermal responses are inherently variable and difficult to predict, yet thermal comfort assessments and building decisions often do not explicitly account for this heterogeneity and uncertainty when evaluating environmental interventions. This study investigates how Bayesian causal inference can improve thermal comfort assessment by quantifying intervention effects, their uncertainty, and heterogeneity in occupant responses. We applied the proposed framework to data from a historical laboratory thermal comfort experiment that contributed to the empirical foundation of Fanger’s predicted mean vote model. We defined causal estimands for hypothetical heating and cooling interventions and estimated their effects on thermal sensation while accounting for heterogeneity associated with biological sex, time of day, and exposure duration. The results showed that assumptions embedded in the predicted mean vote model, including fixed metabolic rates and steady-state representations of thermoregulation, contributed to discrepancies between predicted and observed thermal sensation. Thermal responses were not constant across occupants or over time: identical environmental interventions produced different effects by sex and exposure duration. To support engineering applications, we developed a utility-weighted dissatisfaction index to summarise predicted dissatisfaction while preserving uncertainty from the Bayesian model. This framework demonstrated that energy-saving temperature adjustments may have unequal consequences for different occupant groups. These findings highlight the importance of explicitly quantifying uncertainty and heterogeneity when evaluating thermal comfort interventions. Integrating probabilistic inference with decision-oriented performance metrics provides a transparent framework for building operations and design that better supports energy efficiency, occupant comfort, and thermal equity.
+">
+<meta name="citation_keywords" content="thermal comfort,Bayesian causal inference,decision-making,thermal equity">
+<meta name="citation_author" content="Matteo Favero">
+<meta name="citation_author" content="Marika Vellei">
+<meta name="citation_author" content="Andrew Sonta">
+<meta name="citation_publication_date" content="2026-10-31">
+<meta name="citation_cover_date" content="2026-10-31">
+<meta name="citation_year" content="2026">
+<meta name="citation_online_date" content="2026-10-31">
+<meta name="citation_language" content="en">
+<meta name="citation_journal_title" content="Submitted to Building and Environment">
+<meta name="citation_reference" content="citation_title=Personal comfort models  a new paradigm in thermal comfort for occupant-centric environmental control;,citation_author=Joyce Kim;,citation_author=Stefano Schiavon;,citation_author=Gail Brager;,citation_publication_date=2018-03-15;,citation_cover_date=2018-03-15;,citation_year=2018;,citation_doi=10.1016/j.buildenv.2018.01.023;,citation_volume=132;,citation_journal_title=Building and Environment;">
+<meta name="citation_reference" content="citation_title=Personal differences in thermal comfort perception: Observations from a field study in brisbane, australia;,citation_author=T. Kramer;,citation_author=V. Garcia-Hansen;,citation_author=S. Omrani;,citation_author=J. Zhou;,citation_author=D. Chen;,citation_publication_date=2023-11-01;,citation_cover_date=2023-11-01;,citation_year=2023;,citation_doi=10.1016/j.buildenv.2023.110873;,citation_volume=245;,citation_journal_title=Building and Environment;">
+<meta name="citation_reference" content="citation_title=Human physiology for personal thermal comfort-based HVAC control  a review;,citation_author=Dragos-Ioan Bogatu;,citation_author=Jun Shinoda;,citation_author=José Joaquín Aguilera;,citation_author=Bjarne W. Olesen;,citation_author=Futa Watanabe;,citation_author=Yosuke Kaneko;,citation_author=Ongun B. Kazanci;,citation_publication_date=2023-07-15;,citation_cover_date=2023-07-15;,citation_year=2023;,citation_fulltext_html_url=https://www.sciencedirect.com/science/article/pii/S0360132323004456;,citation_doi=10.1016/j.buildenv.2023.110418;,citation_volume=240;,citation_journal_title=Building and Environment;">
+<meta name="citation_reference" content="citation_title=A systematic review of personal thermal comfort models;,citation_author=Larissa Arakawa Martins;,citation_author=Veronica Soebarto;,citation_author=Terence Williamson;,citation_publication_date=2022-01-01;,citation_cover_date=2022-01-01;,citation_year=2022;,citation_doi=10.1016/j.buildenv.2021.108502;,citation_volume=207;,citation_journal_title=Building and Environment;">
+<meta name="citation_reference" content="citation_title=Design and evaluation of the initial 50th percentile female prototype rear impact dummy, BioRID P50F  indications for the need of an additional dummy size;,citation_author=Anna Carlsson;,citation_author=Johan Davidsson;,citation_author=Astrid Linder;,citation_author=Mats Y. Svensson;,citation_publication_date=2021;,citation_cover_date=2021;,citation_year=2021;,citation_doi=10.3389/fbioe.2021.687058;,citation_volume=9;,citation_journal_title=Frontiers in Bioengineering and Biotechnology;">
+<meta name="citation_reference" content="citation_title=Inclusive crash test dummies: Rethinking standards and reference models;,citation_fulltext_html_url=https://genderedinnovations.stanford.edu/case-studies/crash.html;">
+<meta name="citation_reference" content="citation_title=Ergonomics of the thermal environment  analytical determination and interpretation of thermal comfort using calculation of the PMV and PPD indices and local thermal comfort criteria (ISO 7730:2025);,citation_author=undefined International Organization for Standardization;">
+<meta name="citation_reference" content="citation_title=Thermal environmental conditions for human occupancy (ANSI/ASHRAE standard 55:2023);,citation_author=undefined American National Standards Institute &amp;amp;amp; American Society of Heating, Refrigerating and Air-Conditioning Engineers;">
+<meta name="citation_reference" content="citation_title=Thermal comfort. Analysis and applications in environmental engineering;,citation_author=Poul O Fanger;,citation_publication_date=1970;,citation_cover_date=1970;,citation_year=1970;">
+<meta name="citation_reference" content="citation_title=Temperature-humidity chart for themal comfort of seated persons;,citation_author=Ralph G. Nevins;,citation_author=Frederick H. Rohles;,citation_author=Wayne Springer;,citation_author=A. M. Feyerherm;,citation_publication_date=1966;,citation_cover_date=1966;,citation_year=1966;,citation_volume=72;,citation_journal_title=ASHRAE Transactions;">
+<meta name="citation_reference" content="citation_title=Analysis of subjective thermal comfort data: A statistical point of view;,citation_author=Matteo Favero;,citation_author=Antonio Luparelli;,citation_author=Salvatore Carlucci;,citation_publication_date=2023-02-15;,citation_cover_date=2023-02-15;,citation_year=2023;,citation_doi=10.1016/j.enbuild.2022.112755;,citation_volume=281;,citation_journal_title=Energy and Buildings;">
+<meta name="citation_reference" content="citation_title=Ten questions concerning statistical data analysis in human-centric buildings research: A focus on thermal comfort investigations;,citation_author=Matteo Favero;,citation_author=Salvatore Carlucci;,citation_author=Giorgia Chinazzo;,citation_author=Jan Kloppenborg Møller;,citation_author=Marcel Schweiker;,citation_author=Marika Vellei;,citation_author=Andrew Sonta;,citation_publication_date=2024-10-01;,citation_cover_date=2024-10-01;,citation_year=2024;,citation_doi=10.1016/j.buildenv.2024.111903;,citation_volume=264;,citation_journal_title=Building and Environment;">
+<meta name="citation_reference" content="citation_title=A review of human thermal comfort in the built environment;,citation_author=Ricardo Forgiarini Rupp;,citation_author=Natalia Giraldo Vásquez;,citation_author=Roberto Lamberts;,citation_publication_date=2015-10-15;,citation_cover_date=2015-10-15;,citation_year=2015;,citation_doi=10.1016/j.enbuild.2015.07.047;,citation_volume=105;,citation_journal_title=Energy and Buildings;">
+<meta name="citation_reference" content="citation_title=Field studies on human thermal comfort  an overview;,citation_author=Asit Kumar Mishra;,citation_author=Maddali Ramgopal;,citation_publication_date=2013-06-01;,citation_cover_date=2013-06-01;,citation_year=2013;,citation_doi=10.1016/j.buildenv.2013.02.015;,citation_volume=64;,citation_journal_title=Building and Environment;">
+<meta name="citation_reference" content="citation_title=Drivers of diversity in human thermal perception  a review for holistic comfort models;,citation_author=Marcel Schweiker;,citation_author=Gesche M. Huebner;,citation_author=Boris R. M. Kingma;,citation_author=Rick Kramer;,citation_author=Hannah Pallubinsky;,citation_publication_date=2018-10-02;,citation_cover_date=2018-10-02;,citation_year=2018;,citation_issue=4;,citation_doi=10.1080/23328940.2018.1534490;,citation_volume=5;,citation_journal_title=Temperature;">
+<meta name="citation_reference" content="citation_title=Thermal comfort and gender: A literature review;,citation_author=S. Karjalainen;,citation_publication_date=2012-04-01;,citation_cover_date=2012-04-01;,citation_year=2012;,citation_issue=2;,citation_doi=10.1111/j.1600-0668.2011.00747.x;,citation_volume=22;,citation_journal_title=Indoor Air;">
+<meta name="citation_reference" content="citation_title=Sex differences in thermal sensitivity and perception: Implications for behavioral and autonomic thermoregulation;,citation_author=Andrew M. Greenfield;,citation_author=Billie K. Alba;,citation_author=Gabrielle E. W. Giersch;,citation_author=Afton D. Seeley;,citation_publication_date=2023-05-01;,citation_cover_date=2023-05-01;,citation_year=2023;,citation_doi=10.1016/j.physbeh.2023.114126;,citation_volume=263;,citation_journal_title=Physiology &amp;amp;amp; Behavior;">
+<meta name="citation_reference" content="citation_title=Implications of lower indoor temperatures  not cool for cold susceptible individuals across both sexes;,citation_author=Ricardo Forgiarini Rupp;,citation_author=Jacob Feder Piil;,citation_author=Claes Cubel;,citation_author=Lars Nybo;,citation_author=Jørn Toftum;,citation_publication_date=2023-04-01;,citation_cover_date=2023-04-01;,citation_year=2023;,citation_doi=10.1016/j.enbuild.2023.112829;,citation_volume=284;,citation_journal_title=Energy and Buildings;">
+<meta name="citation_reference" content="citation_title=Thermal regulation and comfort during a mild-cold exposure in young japanese women complaining of unusual coldness;,citation_author=Kei Nagashima;,citation_author=Tamae Yoda;,citation_author=Tomoko Yagishita;,citation_author=Aki Taniguchi;,citation_author=Takayoshi Hosono;,citation_author=Kazuyuki Kanosue;,citation_publication_date=2002-03-01;,citation_cover_date=2002-03-01;,citation_year=2002;,citation_issue=3;,citation_doi=10.1152/japplphysiol.00399.2001;,citation_volume=92;,citation_journal_title=Journal of Applied Physiology;">
+<meta name="citation_reference" content="citation_title=Gender differences in office occupant perception of indoor environmental quality (IEQ);,citation_author=Jungsoo Kim;,citation_author=Richard Dear;,citation_author=Christhina Cândido;,citation_author=Hui Zhang;,citation_author=Edward Arens;,citation_publication_date=2013-12-01;,citation_cover_date=2013-12-01;,citation_year=2013;,citation_doi=10.1016/j.buildenv.2013.08.022;,citation_volume=70;,citation_journal_title=Building and Environment;">
+<meta name="citation_reference" content="citation_title=Gender differences in cutaneous laser doppler flow response to local direct and contralateral cooling;,citation_author=Ksenija Cankar;,citation_author=Žare Finderle;,citation_author=Martin Štrucl;,citation_publication_date=2000-05-24;,citation_cover_date=2000-05-24;,citation_year=2000;,citation_issue=3;,citation_doi=10.1159/000025729;,citation_volume=37;,citation_journal_title=Journal of Vascular Research;">
+<meta name="citation_reference" content="citation_title=Do women feel colder by nature? A systematic literature review and meta-analysis of sex differences in physiological and subjective thermal responses;,citation_author=Marika Vellei;,citation_author=Hannah Pallubinsky;,citation_author=Dolaana Khovalyg;,citation_author=Sarah Carter;,citation_author=Giorgia Chinazzo;,citation_publication_date=2025-06-01;,citation_cover_date=2025-06-01;,citation_year=2025;,citation_doi=10.1016/j.buildenv.2025.112936;,citation_volume=277;,citation_journal_title=Building and Environment;">
+<meta name="citation_reference" content="citation_title=Analysis of the accuracy on PMV  PPD model using the ASHRAE global thermal comfort database II;,citation_author=Toby Cheung;,citation_author=Stefano Schiavon;,citation_author=Thomas Parkinson;,citation_author=Peixian Li;,citation_author=Gail Brager;,citation_publication_date=2019-04-15;,citation_cover_date=2019-04-15;,citation_year=2019;,citation_doi=10.1016/j.buildenv.2019.01.055;,citation_volume=153;,citation_journal_title=Building and Environment;">
+<meta name="citation_reference" content="citation_title=Evaluating assumptions of scales for subjective assessment of thermal environments  do laypersons perceive them the way, we researchers believe?;,citation_author=Marcel Schweiker;,citation_author=Maíra André;,citation_author=Farah Al-Atrash;,citation_author=Hanan Al-Khatri;,citation_author=Rea Risky Alprianti;,citation_author=Hayder Alsaad;,citation_author=Rucha Amin;,citation_author=Eleni Ampatzi;,citation_author=Alpha Yacob Arsano;,citation_author=Elie Azar;,citation_author=Bahareh Bannazadeh;,citation_author=Amina Batagarawa;,citation_author=Susanne Becker;,citation_author=Carolina Buonocore;,citation_author=Bin Cao;,citation_author=Joon-Ho Choi;,citation_author=Chungyoon Chun;,citation_author=Hein Daanen;,citation_author=Siti Aisyah Damiati;,citation_author=Lyrian Daniel;,citation_author=Renata De Vecchi;,citation_author=Shivraj Dhaka;,citation_author=Samuel Domínguez-Amarillo;,citation_author=Edyta Dudkiewicz;,citation_author=Lakshmi Prabha Edappilly;,citation_author=Jesica Fernández-Agüera;,citation_author=Mireille Folkerts;,citation_author=Arjan Frijns;,citation_author=Gabriel Gaona;,citation_author=Vishal Garg;,citation_author=Stephanie Gauthier;,citation_author=Shahla Ghaffari Jabbari;,citation_author=Djamila Harimi;,citation_author=Runa T. Hellwig;,citation_author=Gesche M Huebner;,citation_author=Quan Jin;,citation_author=Mina Jowkar;,citation_author=Jungsoo Kim;,citation_author=Nelson King;,citation_author=Boris Kingma;,citation_author=M. Donny Koerniawan;,citation_author=Jakub Kolarik;,citation_author=Shailendra Kumar;,citation_author=Alison Kwok;,citation_author=Roberto Lamberts;,citation_author=Marta Laska;,citation_author=M. C. Jeffrey Lee;,citation_author=Yoonhee Lee;,citation_author=Vanessa Lindermayr;,citation_author=Mohammadbagher Mahaki;,citation_author=Udochukwu Marcel-Okafor;,citation_author=Laura Marín-Restrepo;,citation_author=Anna Marquardsen;,citation_author=Francesco Martellotta;,citation_author=Jyotirmay Mathur;,citation_author=Isabel Mino-Rodriguez;,citation_author=Azadeh Montazami;,citation_author=Di Mou;,citation_author=Bassam Moujalled;,citation_author=Mia Nakajima;,citation_author=Edward Ng;,citation_author=Marcellinus Okafor;,citation_author=Mark Olweny;,citation_author=Wanlu Ouyang;,citation_author=Ana Lígia Papst de Abreu;,citation_author=Alexis Pérez-Fargallo;,citation_author=Indrika Rajapaksha;,citation_author=Greici Ramos;,citation_author=Saif Rashid;,citation_author=Christoph F. Reinhart;,citation_author=Ma. Isabel Rivera;,citation_author=Mazyar Salmanzadeh;,citation_author=Karin Schakib-Ekbatan;,citation_author=Stefano Schiavon;,citation_author=Salman Shooshtarian;,citation_author=Masanori Shukuya;,citation_author=Veronica Soebarto;,citation_author=Suhendri Suhendri;,citation_author=Mohammad Tahsildoost;,citation_author=Federico Tartarini;,citation_author=Despoina Teli;,citation_author=Priyam Tewari;,citation_author=Samar Thapa;,citation_author=Maureen Trebilcock;,citation_author=Jörg Trojan;,citation_author=Ruqayyatu B. Tukur;,citation_author=Conrad Voelker;,citation_author=Yeung Yam;,citation_author=Liu Yang;,citation_author=Gabriela Zapata-Lancaster;,citation_author=Yongchao Zhai;,citation_author=Yingxin Zhu;,citation_author=ZahraSadat Zomorodian;,citation_publication_date=2020-03-15;,citation_cover_date=2020-03-15;,citation_year=2020;,citation_doi=10.1016/j.enbuild.2020.109761;,citation_volume=211;,citation_journal_title=Energy and Buildings;">
+<meta name="citation_reference" content="citation_title=Net zero by 2050: A roadmap for the global energy sector;,citation_author=undefined International Energy Agency;,citation_publication_date=2021;,citation_cover_date=2021;,citation_year=2021;,citation_fulltext_html_url=https://www.iea.org/reports/net-zero-by-2050;">
+<meta name="citation_reference" content="citation_title=Estimating causal effects of treatments in randomized and nonrandomized studies.;,citation_author=Donald B. Rubin;,citation_publication_date=1974;,citation_cover_date=1974;,citation_year=1974;,citation_issue=5;,citation_doi=10.1037/h0037350;,citation_volume=66;,citation_journal_title=Journal of Educational Psychology;">
+<meta name="citation_reference" content="citation_title=Causal inference: What if;,citation_author=Miguel A. Hernán;,citation_author=James M. Robins;,citation_publication_date=2020;,citation_cover_date=2020;,citation_year=2020;,citation_fulltext_html_url=https://miguelhernan.org/whatifbook;">
+<meta name="citation_reference" content="citation_title=What is your estimand? Defining the target quantity connects statistical evidence to theory;,citation_author=Ian Lundberg;,citation_author=Rebecca Johnson;,citation_author=Brandon M. Stewart;,citation_publication_date=2021-06-01;,citation_cover_date=2021-06-01;,citation_year=2021;,citation_issue=3;,citation_doi=10.1177/00031224211004187;,citation_volume=86;,citation_journal_title=American Sociological Review;">
+<meta name="citation_reference" content="citation_title=The estimands framework: A primer on the ICH E9(R1) addendum;,citation_author=Brennan C Kahan;,citation_author=Joanna Hindley;,citation_author=Mark Edwards;,citation_author=Suzie Cro;,citation_author=Tim P Morris;,citation_publication_date=2024-01-23;,citation_cover_date=2024-01-23;,citation_year=2024;,citation_doi=10.1136/bmj-2023-076316;,citation_volume=384;,citation_journal_title=BMJ;">
+<meta name="citation_reference" content="citation_title=The ASA statement on p-values: Context, process, and purpose;,citation_author=Ronald L. Wasserstein;,citation_author=Nicole A. Lazar;,citation_publication_date=2016-04-02;,citation_cover_date=2016-04-02;,citation_year=2016;,citation_issue=2;,citation_doi=10.1080/00031305.2016.1154108;,citation_volume=70;,citation_journal_title=The American Statistician;">
+<meta name="citation_reference" content="citation_title=Scientists rise up against statistical significance;,citation_author=Valentin Amrhein;,citation_author=Sander Greenland;,citation_author=Blake McShane;,citation_publication_date=2019-03;,citation_cover_date=2019-03;,citation_year=2019;,citation_issue=7748;,citation_doi=10.1038/d41586-019-00857-9;,citation_volume=567;,citation_journal_title=Nature;">
+<meta name="citation_reference" content="citation_title=Moving to a world beyond “p&amp;amp;amp;lt;0.05”;,citation_author=Ronald L. Wasserstein;,citation_author=Allen L. Schirm;,citation_author=Nicole A. Lazar;,citation_publication_date=2019-03-29;,citation_cover_date=2019-03-29;,citation_year=2019;,citation_issue=sup1;,citation_doi=10.1080/00031305.2019.1583913;,citation_volume=73;,citation_journal_title=The American Statistician;">
+<meta name="citation_reference" content="citation_title=Statistical tests, p values, confidence intervals, and power: A guide to misinterpretations;,citation_author=Sander Greenland;,citation_author=Stephen J. Senn;,citation_author=Kenneth J. Rothman;,citation_author=John B. Carlin;,citation_author=Charles Poole;,citation_author=Steven N. Goodman;,citation_author=Douglas G. Altman;,citation_publication_date=2016-04-01;,citation_cover_date=2016-04-01;,citation_year=2016;,citation_issue=4;,citation_doi=10.1007/s10654-016-0149-3;,citation_volume=31;,citation_journal_title=European Journal of Epidemiology;">
+<meta name="citation_reference" content="citation_title=Invited commentary: The need for cognitive science in methodology;,citation_author=Sander Greenland;,citation_publication_date=2017-09-15;,citation_cover_date=2017-09-15;,citation_year=2017;,citation_issue=6;,citation_doi=10.1093/aje/kwx259;,citation_volume=186;,citation_journal_title=American Journal of Epidemiology;">
+<meta name="citation_reference" content="citation_title=A dirty dozen: Twelve p-value misconceptions;,citation_author=Steven Goodman;,citation_publication_date=2008-07-01;,citation_cover_date=2008-07-01;,citation_year=2008;,citation_issue=3;,citation_doi=10.1053/j.seminhematol.2008.04.003;,citation_volume=45;,citation_journal_title=Seminars in Hematology;">
+<meta name="citation_reference" content="citation_title=Thermal sensations of sedentary man in moderate temperatures;,citation_author=Frederick H. Rohles;,citation_publication_date=1970;,citation_cover_date=1970;,citation_year=1970;">
+<meta name="citation_reference" content="citation_title=Statistical decision theory and bayesian analysis;,citation_author=James O. Berger;,citation_publication_date=1985;,citation_cover_date=1985;,citation_year=1985;,citation_doi=10.1007/978-1-4757-4286-2;,citation_series_title=Springer series in statistics;">
+<meta name="citation_reference" content="citation_title=R: A language and environment for statistical computing;,citation_author=undefined R Core Team;,citation_publication_date=2025;,citation_cover_date=2025;,citation_year=2025;,citation_fulltext_html_url=https://www.R-project.org/;">
+<meta name="citation_reference" content="citation_title=RStudio: Integrated development environment for r;,citation_author=undefined Posit Software;,citation_publication_date=2026;,citation_cover_date=2026;,citation_year=2026;,citation_fulltext_html_url=http://www.posit.co/;">
+<meta name="citation_reference" content="citation_title=Tidyverse: Easily install and load the ’tidyverse’;,citation_author=Hadley Wickham;,citation_publication_date=2023-02-22;,citation_cover_date=2023-02-22;,citation_year=2023;,citation_fulltext_html_url=https://cran.r-project.org/web/packages/tidyverse/index.html;">
+<meta name="citation_reference" content="citation_title=Data.table: Extension of ’data.frame’;,citation_author=Tyson Barrett;,citation_author=Matt Dowle;,citation_author=Arun Srinivasan;,citation_author=Jan Gorecki;,citation_author=Michael Chirico;,citation_author=Toby Hocking;,citation_author=Benjamin Schwendinger;,citation_author=Ivan Krylov;,citation_author=Pasha Stetsenko;,citation_author=Tom Short;,citation_author=Steve Lianoglou;,citation_author=Eduard Antonyan;,citation_author=Markus Bonsch;,citation_author=Hugh Parsonage;,citation_author=Scott Ritchie;,citation_author=Kun Ren;,citation_author=Xianying Tan;,citation_author=Rick Saporta;,citation_author=Otto Seiskari;,citation_author=Xianghui Dong;,citation_author=Michel Lang;,citation_author=Watal Iwasaki;,citation_author=Seth Wenchel;,citation_author=Karl Broman;,citation_author=Tobias Schmidt;,citation_author=David Arenburg;,citation_author=Ethan Smith;,citation_author=Francois Cocquemas;,citation_author=Matthieu Gomez;,citation_author=Philippe Chataignon;,citation_author=Nello Blaser;,citation_author=Dmitry Selivanov;,citation_author=Andrey Riabushenko;,citation_author=Cheng Lee;,citation_author=Declan Groves;,citation_author=Daniel Possenriede;,citation_author=Felipe Parages;,citation_author=Denes Toth;,citation_author=Mus Yaramaz-David;,citation_author=Ayappan Perumal;,citation_author=James Sams;,citation_author=Martin Morgan;,citation_author=Michael Quinn;,citation_author=@javrucebo (GitHub user);,citation_author=Marc Halperin;,citation_author=Roy Storey;,citation_author=Manish Saraswat;,citation_author=Morgan Jacob;,citation_author=Michael Schubmehl;,citation_author=Davis Vaughan;,citation_author=Leonardo Silvestri;,citation_author=Jim Hester;,citation_author=Anthony Damico;,citation_author=Sebastian Freundt;,citation_author=David Simons;,citation_author=Elliott Sales Andrade;,citation_author=Cole Miller;,citation_author=Jens Peder Meldgaard;,citation_author=Vaclav Tlapak;,citation_author=Kevin Ushey;,citation_author=Dirk Eddelbuettel;,citation_author=Tony Fischetti;,citation_author=Ofek Shilon;,citation_author=Vadim Khotilovich;,citation_author=Hadley Wickham;,citation_author=Bennet Becker;,citation_author=Kyle Haynes;,citation_author=Boniface Christian Kamgang;,citation_author=Olivier Delmarcell;,citation_author=Josh O’Brien;,citation_author=Dereck Mezquita;,citation_author=Michael Czekanski;,citation_author=Dmitry Shemetov;,citation_author=Nitish Jha;,citation_author=Joshua Wu;,citation_author=Iago Giné-Vázquez;,citation_author=Anirban Chetia;,citation_author=Doris Amoakohene;,citation_author=Angel Feliz;,citation_author=Michael Young;,citation_author=Mark Seeto;,citation_author=Philippe Grosjean;,citation_author=Vincent Runge;,citation_author=Christian Wia;,citation_author=Elise Maigné;,citation_author=Vincent Rocher;,citation_author=Vijay Lulla;,citation_author=Aljaž Sluga;,citation_author=Bill Evans;,citation_author=Reino Bruner;,citation_author=@badasahog (GitHub user);,citation_author=Vinit Thakur;,citation_author=Mukul Kumar;,citation_author=Ildikó Czeller;,citation_author=Manmita Das;,citation_author=Tarun Thammisetty;,citation_author=Marco Colombo;,citation_author=Tim Taylor;,citation_publication_date=2026-08-24;,citation_cover_date=2026-08-24;,citation_year=2026;,citation_fulltext_html_url=https://cran.r-project.org/web/packages/data.table/index.html;">
+<meta name="citation_reference" content="citation_title=Brms: Bayesian regression models using ’stan’;,citation_author=Paul-Christian Bürkner;,citation_author=Jonah Gabry;,citation_author=Sebastian Weber;,citation_author=Andrew Johnson;,citation_author=Martin Modrak;,citation_author=Hamada S. Badr;,citation_author=Frank Weber;,citation_author=Aki Vehtari;,citation_author=Mattan S. Ben-Shachar;,citation_author=Hayden Rabel;,citation_author=Simon C. Mills;,citation_author=Stephen Wild;,citation_author=Ven Popov;,citation_author=Ioannis Kosmidis;,citation_author=Ben Schneider;,citation_author=Noa Kallioinen;,citation_author=Wellington J. Silva;,citation_author=Luiz Carvalho;,citation_author=Sermet Pekin;,citation_publication_date=2025-09-09;,citation_cover_date=2025-09-09;,citation_year=2025;,citation_fulltext_html_url=https://cran.r-project.org/web/packages/brms/index.html;">
+<meta name="citation_reference" content="citation_title=Tidybayes: Tidy data and ’geoms’ for bayesian models;,citation_author=Matthew Kay;,citation_author=Timothy Mastny;,citation_publication_date=2024-09-15;,citation_cover_date=2024-09-15;,citation_year=2024;,citation_fulltext_html_url=https://cran.r-project.org/web/packages/tidybayes/index.html;">
+<meta name="citation_reference" content="citation_title=Loo: Efficient leave-one-out cross-validation and WAIC for bayesian models;,citation_author=Aki Vehtari;,citation_author=Jonah Gabry;,citation_author=Måns Magnusson;,citation_author=Yuling Yao;,citation_author=Paul-Christian Bürkner;,citation_author=Topi Paananen;,citation_author=Andrew Gelman;,citation_author=Ben Goodrich;,citation_author=Juho Piironen;,citation_author=Bruno Nicenboim;,citation_author=Leevi Lindgren;,citation_author=Visruth Srimath Kandali;,citation_author=Florence Bockting;,citation_publication_date=2026-07-24;,citation_cover_date=2026-07-24;,citation_year=2026;,citation_fulltext_html_url=https://cran.r-project.org/web/packages/loo/index.html;">
+<meta name="citation_reference" content="citation_title=Comf: Models and equations for human comfort research;,citation_author=Marcel Schweiker;,citation_author=Sophia Mueller;,citation_author=Michael Kleber;,citation_author=Boris Kingma;,citation_author=Masanori Shukuya;,citation_author=Shaomi Rahman;,citation_author=Shoaib Sarwar;,citation_publication_date=2024-01-29;,citation_cover_date=2024-01-29;,citation_year=2024;,citation_fulltext_html_url=https://cran.r-project.org/web/packages/comf/index.html;">
+<meta name="citation_reference" content="citation_title=Patchwork: The composer of plots;,citation_author=Thomas Lin Pedersen;,citation_publication_date=2025-08-25;,citation_cover_date=2025-08-25;,citation_year=2025;,citation_fulltext_html_url=https://cran.r-project.org/web/packages/patchwork/index.html;">
+<meta name="citation_reference" content="citation_title=metR: Tools for easier analysis of meteorological fields;,citation_author=Elio Campitelli;,citation_publication_date=2025-12-09;,citation_cover_date=2025-12-09;,citation_year=2025;,citation_fulltext_html_url=https://cran.r-project.org/web/packages/metR/index.html;">
+<meta name="citation_reference" content="citation_title=Personalized metabolic rates vs. ISO standards;,citation_author=Fariza Sabit;,citation_author=Dolaana Khovalyg;,citation_editor=Claudio Zilio;,citation_editor=Filippo Busato;,citation_editor=Livio Mazzarella;,citation_editor=Marco Noro;,citation_publication_date=2026;,citation_cover_date=2026;,citation_year=2026;,citation_doi=10.1007/978-3-032-06810-1_82;,citation_conference=Springer Nature Switzerland;">
+<meta name="citation_reference" content="citation_title=Gender and age effects on metabolic rates of office work, housework, and different walking speeds;,citation_author=Siru Gao;,citation_author=Liu Yang;,citation_author=Yanyan Li;,citation_author=Shichao Liu;,citation_author=Hui Zhang;,citation_author=Edward Arens;,citation_author=Yongchao Zhai;,citation_publication_date=2023-11-01;,citation_cover_date=2023-11-01;,citation_year=2023;,citation_doi=10.1016/j.enbuild.2023.113551;,citation_volume=298;,citation_journal_title=Energy and Buildings;">
+<meta name="citation_reference" content="citation_title=Indirect calorimetry on the metabolic rate of sitting, standing and walking office activities;,citation_author=Yongchao Zhai;,citation_author=Minghui Li;,citation_author=Siru Gao;,citation_author=Liu Yang;,citation_author=Hui Zhang;,citation_author=Edward Arens;,citation_author=Yunfei Gao;,citation_publication_date=2018-11-01;,citation_cover_date=2018-11-01;,citation_year=2018;,citation_doi=10.1016/j.buildenv.2018.09.011;,citation_volume=145;,citation_journal_title=Building and Environment;">
+<meta name="citation_reference" content="citation_title=Indirect calorimetry of metabolic rate in college-age japanese subjects during various office activities;,citation_author=Akihisa Nomoto;,citation_author=Ryo Hisayama;,citation_author=Shu Yoda;,citation_author=Mizuho Akimoto;,citation_author=Masayuki Ogata;,citation_author=Hitomi Tsutsumi;,citation_author=Shin-ichi Tanabe;,citation_publication_date=2021-07-15;,citation_cover_date=2021-07-15;,citation_year=2021;,citation_doi=10.1016/j.buildenv.2021.107909;,citation_volume=199;,citation_journal_title=Building and Environment;">
+<meta name="citation_reference" content="citation_title=The validity of ISO-PMV for predicting comfort votes in every-day thermal environments;,citation_author=Michael A Humphreys;,citation_author=J Fergus Nicol;,citation_publication_date=2002-07-01;,citation_cover_date=2002-07-01;,citation_year=2002;,citation_issue=6;,citation_doi=10.1016/S0378-7788(02)00018-X;,citation_volume=34;,citation_journal_title=Energy and Buildings;">
+<meta name="citation_reference" content="citation_title=Extension of the PMV model to non-air-conditioned buildings in warm climates;,citation_author=P. Ole Fanger;,citation_author=Jørn Toftum;,citation_publication_date=2002-07-01;,citation_cover_date=2002-07-01;,citation_year=2002;,citation_issue=6;,citation_doi=10.1016/S0378-7788(02)00003-8;,citation_volume=34;,citation_journal_title=Energy and Buildings;">
+<meta name="citation_reference" content="citation_title=A theoretical adaptive model of thermal comfort  adaptive predicted mean&nbsp;vote&nbsp;(aPMV);,citation_author=Runming Yao;,citation_author=Baizhan Li;,citation_author=Jing Liu;,citation_publication_date=2009-10-01;,citation_cover_date=2009-10-01;,citation_year=2009;,citation_issue=10;,citation_doi=10.1016/j.buildenv.2009.02.014;,citation_volume=44;,citation_journal_title=Building and Environment;">
+<meta name="citation_reference" content="citation_title=Modification of sweat evaporative heat loss in the PMV/PPD model to improve thermal comfort prediction in warm climates;,citation_author=Amir Omidvar;,citation_author=Jungsoo Kim;,citation_publication_date=2020-06-01;,citation_cover_date=2020-06-01;,citation_year=2020;,citation_doi=10.1016/j.buildenv.2020.106868;,citation_volume=176;,citation_journal_title=Building and Environment;">
+<meta name="citation_reference" content="citation_title=Variations in body morphology explain sex differences in thermoeffector function during compensable heat stress;,citation_author=Sean R. Notley;,citation_author=Joonhee Park;,citation_author=Kyoko Tagami;,citation_author=Norikazu Ohnishi;,citation_author=Nigel A. S. Taylor;,citation_publication_date=2017-05-01;,citation_cover_date=2017-05-01;,citation_year=2017;,citation_fulltext_html_url=https://doi.org/10.1113/EP086112;,citation_issue=5;,citation_doi=10.1113/EP086112;,citation_volume=102;,citation_journal_title=Experimental Physiology;">
+<meta name="citation_reference" content="citation_title=Investigating effects of moderate hyperthermia at two phases of the circadian cycle for core temperature (heat gain and peak), on quadriceps maximal voluntary contraction force;,citation_author=Ben J. Edwards;,citation_author=Kevin P. Gibbins;,citation_author=Chris J. Morgan;,citation_author=Magali Giacomoni;,citation_author=Colin M. Robertson;,citation_author=David A. Low;,citation_author=Samuel A. Pullinger;,citation_publication_date=2025-05-04;,citation_cover_date=2025-05-04;,citation_year=2025;,citation_issue=5;,citation_doi=10.1080/07420528.2025.2494631;,citation_volume=42;,citation_journal_title=Chronobiology International;">
+<meta name="citation_reference" content="citation_title=Rectal temperature, distal sweat rate, and forearm blood flow following mild exercise at two phases of the circadian cycle;,citation_author=Jim Waterhouse;,citation_author=Seika Aizawa;,citation_author=Alan Nevill;,citation_author=Benjamin Edwards;,citation_author=Dietmar Weinert;,citation_author=Greg Atkinson;,citation_author=Thomas Reilly;,citation_publication_date=2007-01-01;,citation_cover_date=2007-01-01;,citation_year=2007;,citation_issue=1;,citation_doi=10.1080/07420520601142551;,citation_volume=24;,citation_journal_title=Chronobiology International;">
+<meta name="citation_reference" content="citation_title=Effect of time-of-day on human dynamic thermal perception;,citation_author=Marika Vellei;,citation_author=Ilaria Pigliautile;,citation_author=Anna Laura Pisello;,citation_publication_date=2023-02-09;,citation_cover_date=2023-02-09;,citation_year=2023;,citation_issue=1;,citation_doi=10.1038/s41598-023-29615-8;,citation_volume=13;,citation_journal_title=Scientific Reports;">
+<meta name="citation_reference" content="citation_title=Forty years of fanger’s model of thermal comfort: Comfort for all?;,citation_author=J. Van Hoof;,citation_publication_date=2008-06-01;,citation_cover_date=2008-06-01;,citation_year=2008;,citation_issue=3;,citation_doi=10.1111/j.1600-0668.2007.00516.x;,citation_volume=18;,citation_journal_title=Indoor Air;">
+</head>
+<body class="quarto-light">
+
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full"><div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Ending the ‘thermostat wars’: a Bayesian causal framework for thermal comfort decision-making under occupant heterogeneity and uncertainty</h1>
+          </div>
+
+    
+    <div class="quarto-title-meta-container">
+      <div class="quarto-title-meta-column-start">
+        
+        <div class="quarto-title-meta">
+
+                <div>
+            <div class="quarto-title-meta-heading">Authors</div>
+            <div class="quarto-title-meta-contents">
+                        <p>Matteo Favero <a href="mailto:matteo.favero08@gmail.com" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> <a href="https://orcid.org/0000-0002-3853-2585" class="quarto-title-author-orcid" aria-label="ORCID profile for Matteo Favero"> <img alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg=="></a></p>
+                        <p>Marika Vellei <a href="https://orcid.org/0000-0001-5676-5991" class="quarto-title-author-orcid" aria-label="ORCID profile for Marika Vellei"> <img alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg=="></a></p>
+                        <p>Andrew Sonta <a href="https://orcid.org/0000-0001-9021-0842" class="quarto-title-author-orcid" aria-label="ORCID profile for Andrew Sonta"> <img alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg=="></a></p>
+                      </div>
+          </div>
+                
+                <div>
+            <div class="quarto-title-meta-heading">Published</div>
+            <div class="quarto-title-meta-contents">
+              <p class="date">31 October, 2026</p>
+            </div>
+          </div>
+          
+                <div>
+            <div class="quarto-title-meta-heading">Modified</div>
+            <div class="quarto-title-meta-contents">
+              <p class="date-modified">04 November, 2026</p>
+            </div>
+          </div>
+                
+              </div>
+      </div>
+      <div class="quarto-title-meta-column-end quarto-other-formats-target">
+      </div>
+    </div>
+
+    <div>
+      <div class="abstract">
+        <div class="block-title">Abstract</div>
+        <p>Human thermal responses are inherently variable and difficult to predict, yet thermal comfort assessments and building decisions often do not explicitly account for this heterogeneity and uncertainty when evaluating environmental interventions. This study investigates how Bayesian causal inference can improve thermal comfort assessment by quantifying intervention effects, their uncertainty, and heterogeneity in occupant responses. We applied the proposed framework to data from a historical laboratory thermal comfort experiment that contributed to the empirical foundation of Fanger’s predicted mean vote model. We defined causal estimands for hypothetical heating and cooling interventions and estimated their effects on thermal sensation while accounting for heterogeneity associated with biological sex, time of day, and exposure duration. The results showed that assumptions embedded in the predicted mean vote model, including fixed metabolic rates and steady-state representations of thermoregulation, contributed to discrepancies between predicted and observed thermal sensation. Thermal responses were not constant across occupants or over time: identical environmental interventions produced different effects by sex and exposure duration. To support engineering applications, we developed a utility-weighted dissatisfaction index to summarise predicted dissatisfaction while preserving uncertainty from the Bayesian model. This framework demonstrated that energy-saving temperature adjustments may have unequal consequences for different occupant groups. These findings highlight the importance of explicitly quantifying uncertainty and heterogeneity when evaluating thermal comfort interventions. Integrating probabilistic inference with decision-oriented performance metrics provides a transparent framework for building operations and design that better supports energy efficiency, occupant comfort, and thermal equity.</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="keywords">
+        <div class="block-title">Keywords</div>
+        <p>thermal comfort, Bayesian causal inference, decision-making, thermal equity</p>
+      </div>
+    </div>
+
+    <div class="quarto-other-links-text-target">
+    </div>  </div>
+</header><div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+<li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">1</span> Introduction</a></li>
+  <li>
+<a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods"><span class="header-section-number">2</span> Methods</a>
+  <ul class="collapse">
+<li><a href="#dataset" id="toc-dataset" class="nav-link" data-scroll-target="#dataset"><span class="header-section-number">2.1</span> Dataset</a></li>
+  <li><a href="#causal-estimand" id="toc-causal-estimand" class="nav-link" data-scroll-target="#causal-estimand"><span class="header-section-number">2.2</span> Causal estimand</a></li>
+  <li><a href="#utility-weighted-outcome-index" id="toc-utility-weighted-outcome-index" class="nav-link" data-scroll-target="#utility-weighted-outcome-index"><span class="header-section-number">2.3</span> Utility-weighted outcome index</a></li>
+  <li><a href="#statistical-analysis" id="toc-statistical-analysis" class="nav-link" data-scroll-target="#statistical-analysis"><span class="header-section-number">2.4</span> Statistical analysis</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results"><span class="header-section-number">3</span> Results</a>
+  <ul class="collapse">
+<li><a href="#pmv-based-thermal-sensation-prediction-performance" id="toc-pmv-based-thermal-sensation-prediction-performance" class="nav-link" data-scroll-target="#pmv-based-thermal-sensation-prediction-performance"><span class="header-section-number">3.1</span> PMV-based thermal sensation prediction performance</a></li>
+  <li><a href="#sex-specific-heterogeneity-in-intervention-responses" id="toc-sex-specific-heterogeneity-in-intervention-responses" class="nav-link" data-scroll-target="#sex-specific-heterogeneity-in-intervention-responses"><span class="header-section-number">3.2</span> Sex-specific heterogeneity in intervention responses</a></li>
+  <li><a href="#time-of-day-heterogeneity-in-intervention-responses" id="toc-time-of-day-heterogeneity-in-intervention-responses" class="nav-link" data-scroll-target="#time-of-day-heterogeneity-in-intervention-responses"><span class="header-section-number">3.3</span> Time-of-day heterogeneity in intervention responses</a></li>
+  <li><a href="#decision-oriented-thermal-comfort-evaluation" id="toc-decision-oriented-thermal-comfort-evaluation" class="nav-link" data-scroll-target="#decision-oriented-thermal-comfort-evaluation"><span class="header-section-number">3.4</span> Decision-oriented thermal comfort evaluation</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#discussion" id="toc-discussion" class="nav-link" data-scroll-target="#discussion"><span class="header-section-number">4</span> Discussion</a>
+  <ul class="collapse">
+<li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations"><span class="header-section-number">4.1</span> Limitations</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">5</span> Conclusion</a>
+  <ul class="collapse">
+<li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  <li><a href="#supplementary-material" id="toc-supplementary-material" class="nav-link" data-scroll-target="#supplementary-material">Supplementary Material</a></li>
+  <li><a href="#supporting-analyses" id="toc-supporting-analyses" class="nav-link" data-scroll-target="#supporting-analyses">Supporting analyses</a></li>
+  <li><a href="#data-and-code-availability" id="toc-data-and-code-availability" class="nav-link" data-scroll-target="#data-and-code-availability">Data and code availability</a></li>
+  </ul>
+</li>
+  </ul><div class="quarto-alternate-notebooks"><h2>Notebooks</h2><ul><li><a href="index-preview.html"><i class="bi bi-journal-code"></i>Article Notebook</a></li><li><a href="notebooks\supplementary-material-preview.html"><i class="bi bi-journal-code"></i>Supplementary material</a></li></ul></div></nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+</div>
+<main class="content quarto-banner-title-block" id="quarto-document-content"><section id="introduction" class="level1" data-number="1"><h1 data-number="1">
+<span class="header-section-number">1</span> Introduction</h1>
+<p>Humans respond differently to the same environmental conditions, yet many building engineering and design decisions rely on models that do not fully represent the variability and uncertainty in human responses <span class="citation" data-cites="kim2018 kramer2023">[<a href="#ref-kim2018" role="doc-biblioref">1</a>, <a href="#ref-kramer2023" role="doc-biblioref">2</a>]</span>. Standardised models provide a practical basis for scalable decision-making when individual characteristics are unknown or impractical to measure; however, their predictive value depends not only on estimating the average response but also on understanding the extent to which responses vary across individuals and groups. When systematic differences are not considered, models designed to represent typical conditions may provide incomplete information about how interventions affect different occupants, potentially leading to unequal outcomes in applications involving comfort, safety, or well-being <span class="citation" data-cites="bogatu2023 arakawamartins2022">[<a href="#ref-bogatu2023" role="doc-biblioref">3</a>, <a href="#ref-arakawamartins2022" role="doc-biblioref">4</a>]</span>. The consequences of insufficiently representing biological variability are evident in other engineering fields. For example, vehicle safety systems were historically evaluated primarily using crash-test dummies representing the 50th-percentile male, whereas female dummies were commonly derived by scaling male anthropometric data rather than reflecting female biomechanics <span class="citation" data-cites="carlsson2021 inclusiv">[<a href="#ref-carlsson2021" role="doc-biblioref">5</a>, <a href="#ref-inclusiv" role="doc-biblioref">6</a>]</span>. Consequently, important sex-specific differences in injury mechanisms may not have been fully captured. This illustrates that including different groups in model development does not necessarily ensure that systematic differences between them are adequately represented in the resulting model.</p>
+<p>Thermal comfort standards face a similar challenge. The predicted mean vote (PMV) model developed by Fanger remains the reference approach for assessing thermal comfort in international standards, including ISO 7730:2025 <span class="citation" data-cites="internationalorganizationforstandardization">[<a href="#ref-internationalorganizationforstandardization" role="doc-biblioref">7</a>]</span> and ASHRAE 55:2023 <span class="citation" data-cites="americannationalstandardsinstituteamericansocietyofheatingrefrigeratingandair-conditioningengineers">[<a href="#ref-americannationalstandardsinstituteamericansocietyofheatingrefrigeratingandair-conditioningengineers" role="doc-biblioref">8</a>]</span>. PMV estimates mean thermal sensation based on environmental variables, including air temperature, mean radiant temperature, humidity and air velocity, together with assumptions regarding metabolic rate and clothing insulation <span class="citation" data-cites="fanger1970">[<a href="#ref-fanger1970" role="doc-biblioref">9</a>]</span>. The model was developed from controlled climate-chamber experiments conducted in the mid-twentieth century and was intended to represent the average thermal response of the tested population <span class="citation" data-cites="fanger1970 nevins1966">[<a href="#ref-fanger1970" role="doc-biblioref">9</a>, <a href="#ref-nevins1966" role="doc-biblioref">10</a>]</span>. Although these experiments included both male and female participants, the analytical approaches available at the time limited the ability to characterise heterogeneity in thermal responses. For example, ordinal thermal sensation votes were commonly analysed as continuous variables, repeated measurements were often not explicitly accounted for, and conclusions were frequently based on statistical significance rather than the magnitude and uncertainty of estimated effects <span class="citation" data-cites="favero2023 favero2024">[<a href="#ref-favero2023" role="doc-biblioref">11</a>, <a href="#ref-favero2024" role="doc-biblioref">12</a>]</span>. These analytical choices may have limited the extent to which systematic differences between groups and over time could be characterised.</p>
+<p>Reviews of thermal comfort research have identified substantial variability in human thermal responses associated with physiological, behavioural, contextual and psychological factors <span class="citation" data-cites="rupp2015 mishra2013 schweiker2018">[<a href="#ref-rupp2015" role="doc-biblioref">13</a>–<a href="#ref-schweiker2018" role="doc-biblioref">15</a>]</span>. Sex is one factor that has received considerable attention. Sex differences in body morphology and composition, metabolic heat production, and thermoregulatory responses can influence thermal sensation under identical environmental conditions <span class="citation" data-cites="karjalainen2012 greenfield2023">[<a href="#ref-karjalainen2012" role="doc-biblioref">16</a>, <a href="#ref-greenfield2023" role="doc-biblioref">17</a>]</span>. Previous studies have generally reported that females are more likely to experience discomfort under cooler conditions, although the magnitude and practical relevance of sex-related differences vary across studies and environmental contexts <span class="citation" data-cites="rupp2023 nagashima2002 kim2013 cankar2000">[<a href="#ref-rupp2023" role="doc-biblioref">18</a>–<a href="#ref-cankar2000" role="doc-biblioref">21</a>]</span>. Recent experimental and meta-analytic evidence further suggests that differences in thermal sensation and physiological responses are condition-dependent rather than fixed across environments <span class="citation" data-cites="vellei2025">[<a href="#ref-vellei2025" role="doc-biblioref">22</a>]</span>. However, whether such differences require modifications to comfort models, or how they should be incorporated into practical building decisions, remains unresolved. Beyond sex-related differences, thermal responses may also vary over time. PMV assumes a steady-state heat balance and does not explicitly represent physiological adaptation or temporal changes during prolonged exposure <span class="citation" data-cites="internationalorganizationforstandardization fanger1970">[<a href="#ref-internationalorganizationforstandardization" role="doc-biblioref">7</a>, <a href="#ref-fanger1970" role="doc-biblioref">9</a>]</span>. Additionally, the relationship between thermal sensation and perceived discomfort or dissatisfaction may vary across individuals and contexts, challenging the assumption that a single conversion applies universally <span class="citation" data-cites="cheung2019 schweiker2020">[<a href="#ref-cheung2019" role="doc-biblioref">23</a>, <a href="#ref-schweiker2020" role="doc-biblioref">24</a>]</span>.</p>
+<p>These limitations become increasingly relevant as energy and climate policies encourage wider indoor temperature ranges to reduce building energy demand. The International Energy Agency has identified strategies, such as reducing heating setpoints to approximately 19–20&nbsp;°C and increasing cooling setpoints to approximately 24–25&nbsp;°C, as important measures to reduce energy consumption <span class="citation" data-cites="internationalenergyagency2021">[<a href="#ref-internationalenergyagency2021" role="doc-biblioref">25</a>]</span>. However, if thermal responses differ systematically between occupant groups, interventions that do not account for this heterogeneity and the associated uncertainty may result in unequal comfort outcomes. Understanding such heterogeneity is therefore important for developing effective and equitable approaches to building operation and design.</p>
+<p>Consequently, despite extensive research on thermal comfort, several important gaps remain. First, the intervention effect of interest is seldom defined explicitly before statistical modelling. Although many thermal comfort experiments involve controlled manipulation of environmental conditions, analyses typically focus on regression coefficients, predicted responses or hypothesis tests rather than clearly specifying the quantity that the analysis is intended to estimate. Explicitly defining causal estimands provides a transparent link between the scientific question, the intervention under consideration, the statistical analysis and the interpretation of the effects <span class="citation" data-cites="rubin1974 hernán2020 lundberg2021 kahan2024">[<a href="#ref-rubin1974" role="doc-biblioref">26</a>–<a href="#ref-kahan2024" role="doc-biblioref">29</a>]</span>. Second, thermal comfort research findings are often interpreted primarily by whether <em>p</em>-values cross conventional significance thresholds. Such dichotomisation can obscure the magnitude and uncertainty of estimated effects and their potential implications for occupants and building operation. In particular, the absence of statistical significance does not necessarily imply the absence of a meaningful effect, just as statistical significance alone does not establish practical importance <span class="citation" data-cites="wasserstein2016 amrhein2019 wasserstein2019">[<a href="#ref-wasserstein2016" role="doc-biblioref">30</a>–<a href="#ref-wasserstein2019" role="doc-biblioref">32</a>]</span>. Although the statistical literature has long recognised the misinterpretation and dichotomisation of <em>p</em>-values <span class="citation" data-cites="greenland2016 greenland2017 goodman2008">[<a href="#ref-greenland2016" role="doc-biblioref">33</a>–<a href="#ref-goodman2008" role="doc-biblioref">35</a>]</span>, these issues are particularly relevant when evaluating differences in thermal responses between occupant groups, environmental conditions, or exposure periods, where the practical importance of an estimated difference may not correspond directly to its statistical significance. Third, comfort-related outcomes are commonly derived from thermal sensation using predefined decision rules, such as classifying votes between –1 and 1 as comfortable and more extreme votes as indicating dissatisfaction. Although practical, these decision rules implicitly assume a universal relationship between thermal sensation and comfort-related outcomes. However, evidence suggests that this relationship varies across individuals and contexts <span class="citation" data-cites="cheung2019 schweiker2020">[<a href="#ref-cheung2019" role="doc-biblioref">23</a>, <a href="#ref-schweiker2020" role="doc-biblioref">24</a>]</span>, indicating that a single mapping may not adequately represent all occupants. Finally, thermal comfort research has largely focused on statistical inference and model prediction, whereas engineering practice ultimately requires understanding the causal effects of environmental interventions to inform design and operational decisions, considering their expected consequences, uncertainty, costs and benefits.</p>
+<p>In this study, we address these gaps through a Bayesian re-analysis of the laboratory experiment conducted by Nevins <em>et al.</em> <span class="citation" data-cites="nevins1966">[<a href="#ref-nevins1966" role="doc-biblioref">10</a>]</span>, which contributed to the empirical basis of the PMV model. We first define category-specific causal estimands for hypothetical interventions in air temperature and relative humidity, specifying the intervention effects of interest before developing the statistical model. We then estimate these intervention effects while characterising heterogeneity associated with biological sex, time of day and exposure duration. We further investigate how translating thermal sensation into discomfort-related decisions using Fanger’s conventional conversion and alternative utility-based approaches affects the resulting conclusions. By explicitly separating the estimand, statistical estimation, and decision-making, we show how uncertainty in predicted responses can propagate into practical comfort assessments.</p>
+</section><section id="methods" class="level1" data-number="2"><h1 data-number="2">
+<span class="header-section-number">2</span> Methods</h1>
+<section id="dataset" class="level2" data-number="2.1"><h2 data-number="2.1" class="anchored" data-anchor-id="dataset">
+<span class="header-section-number">2.1</span> Dataset</h2>
+<p>The dataset re-analysed in this study originates from the controlled climate-chamber experiments conducted by Nevins <em>et al</em>. in the mid-1960s <span class="citation" data-cites="nevins1966">[<a href="#ref-nevins1966" role="doc-biblioref">10</a>]</span> and was extracted from a technical report by Rohles (Appendix D of <span class="citation" data-cites="rohles1970">[<a href="#ref-rohles1970" role="doc-biblioref">36</a>]</span>). The experiments involved 720 college-age participants (360 males and 360 females; ages 18–23), tested in groups of 10, comprising 5 males and 5 females. Participants were exposed to one of 72 environmental conditions for 3.0&nbsp;h, with each subject experiencing only a single condition. The experimental design combined nine dry-bulb air temperatures (18.9–27.8&nbsp;°C, 1.1&nbsp;°C increments) with eight relative humidity levels (15–85 %, 10 % increments). Environmental conditions were measured over two winter campaigns conducted during December 1963–January 1964 and December 1964–January 1965. Air velocity was maintained below 0.1&nbsp;m/s, and the mean radiant temperature was controlled to equal the air temperature. Sessions were distributed equally between the afternoon (14:00–17:00) and evening (19:00–22:00) periods. Participants remained seated throughout the exposure and wore standardised clothing ensembles corresponding to approximately 0.6&nbsp;clo. Thermal sensation votes were collected every 30&nbsp;min after the first hour using a seven-point ASHRAE-type thermal sensation scale ranging from ‘cold’ to ‘hot’ with ‘comfortable’ as the central category.</p>
+</section><section id="causal-estimand" class="level2" data-number="2.2"><h2 data-number="2.2" class="anchored" data-anchor-id="causal-estimand">
+<span class="header-section-number">2.2</span> Causal estimand</h2>
+<p>The primary causal estimands were defined within the potential outcomes framework as the category-specific conditional average treatment effects (CATEs) of hypothetical joint interventions on air temperature and relative humidity. An intervention state, denoted by <span class="math inline">\(a\)</span>, was defined as a specific combination of air temperature and relative humidity setpoints, while <span class="math inline">\(a'\)</span> denoted the corresponding baseline setpoint condition. The CATE for the thermal sensation category <span class="math inline">\(k\)</span> was defined as the difference between the probability of observing that category under intervention <span class="math inline">\(a\)</span> and the probability under the reference condition <span class="math inline">\(a'\)</span> conditional on the vector <span class="math inline">\(X\)</span>, comprising biological sex, time of day and time since onset:</p>
+<p><span id="eq-CATE"><span class="math display">\[
+{CATE}_{k}\left( a,a'|X \right) = \Pr{\left( Y^{a} = k\  \right|X}) - \Pr{\left( Y^{a'} = k\  \right|X})
+\tag{1}\]</span></span></p>
+<p>where <span class="math inline">\(Y^{a}\)</span> denotes the potential thermal sensation outcome under intervention <span class="math inline">\(a\)</span>. The additive probability scale was selected because it provides a direct and clinically interpretable measure of intervention impact, expressed as percentage-point changes in the prevalence of each thermal sensation category. Unlike relative effect measures, such as risk ratios or odds ratios, the additive scale quantifies the absolute change in the probability of experiencing each thermal sensation category, allowing intervention effects to be interpreted directly as changes in category prevalence.</p>
+<p>Sex- and time-of-day-specific heterogeneity in intervention responses was characterised by evaluating the CATE at predefined combinations of biological sex, time of day (afternoon or evening), and time since onset. Sex-specific contrasts were obtained by comparing CATEs between males and females while holding the temporal variables fixed, whereas time-of-day-specific contrasts were obtained by comparing afternoon and evening CATEs within each sex. All contrasts were evaluated at predefined time-since-onset values. Two joint environmental interventions were considered. The heating intervention was defined as a reduction in temperature setpoint from <span class="math inline">\(a'\)</span> = (25.0&nbsp;°C, 35%rh) to <span class="math inline">\(a\)</span> = (23.5&nbsp;°C, 35%rh). The cooling intervention was defined as an increase in temperature setpoint from <span class="math inline">\(a'\)</span> = (24.5&nbsp;°C, 55%rh) to <span class="math inline">\(a\)</span> = (26.0&nbsp;°C, 55%rh). Comfort-oriented temperature setpoints were determined using the PMV model, assuming airspeed (va) = 0.05 m/s, metabolic rate (M) = 1.1 met, clothing level (Icl) = 0.6 clo, and mean radiant temperature (tr) equal to air temperature (ta). Relative humidity was set to 35% and 55% to represent plausible indoor conditions associated with relatively dry winter and more humid summer environments, respectively. Under these assumptions, PMV = 0 was obtained at approximately 25.0&nbsp;°C at 35% RH and 24.5&nbsp;°C at 55% RH. The magnitude of each temperature perturbation was selected to ensure that the resulting thermal conditions remained within the conventionally acceptable comfort range (–0.5 ≤ PMV ≤ +0.5).</p>
+<p>The causal interpretation of the estimated effects relies on the assumptions of <em>consistency</em>, <em>exchangeability</em>, <em>positivity</em> and <em>no interference</em> (the combination of consistency and no interference is also often referred to as the <em>stable unit treatment value assumption</em>, SUTVA). In the present study, we restricted the analysis to Nevins’ dataset to improve the plausibility of the causal assumptions. The study-specific rationale for each assumption is summarised in <a href="#tbl-causal-assumptions" class="quarto-xref">Table&nbsp;1</a> (a comprehensive text on causal inference discussing these assumptions can be found in Ref. <span class="citation" data-cites="hernán2020">[<a href="#ref-hern%C3%A1n2020" role="doc-biblioref">27</a>]</span>).</p>
+<div class="cell">
+<div id="tbl-causal-assumptions" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure"><figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-causal-assumptions-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1. Causal assumptions
+</figcaption><div aria-describedby="tbl-causal-assumptions-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="cell caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 2%">
+<col style="width: 39%">
+<col style="width: 58%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">Assumption</th>
+<th style="text-align: left;"></th>
+<th style="text-align: left;">Rationale in the present study</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Consistency:</td>
+<td style="text-align: left;">The observed outcome must correspond to the potential outcome under the actual treatment value received. This requires the treatment to be well-defined, such that each value or combination of treatment values represents a clearly specified intervention.</td>
+<td style="text-align: left;">Consistency was plausible because the interventions were well defined, with the assigned environmental setpoints defining the treatment. Clothing insulation, activity level (sedentary), exposure protocol, and exposure group size were kept constant.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Exchangeability:</td>
+<td style="text-align: left;">The potential outcomes should be independent of the assigned treatment, meaning that treatment assignment should not be related to the outcomes that would have been observed under other possible treatment values.</td>
+<td style="text-align: left;">Exchangeability was considered plausible because the environmental conditions were experimentally assigned, reducing the likelihood that participant characteristics or pre-existing thermal responses systematically determined treatment assignment. The experiments were conducted during winter, providing a relatively consistent context with respect to seasonal acclimatisation.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Positivity:</td>
+<td style="text-align: left;">For all treatment values of interest, there should be adequate overlap in treatment assignment across participants with relevant characteristics, allowing the effects of the interventions to be estimated.</td>
+<td style="text-align: left;">Positivity was plausible because the intervention conditions in the analysis fell within the range and combinations of air temperature and relative humidity represented in the experimental data, allowing the intervention contrasts of interest to be estimated without extrapolating beyond the observed data.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">No interference:</td>
+<td style="text-align: left;">The potential outcome for one individual should not depend on the treatment received by other individuals.</td>
+<td style="text-align: left;">The no-interference assumption was considered plausible because participants were exposed to the assigned environmental conditions under a controlled protocol and were not permitted to discuss their thermal sensations during the experiments, minimising the possibility that one participant’s treatment or reported sensation influenced another participant’s outcome.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+<a class="quarto-notebook-link" id="nblink-1" href="index-preview.html">Source: Article Notebook</a></div>
+</section><section id="utility-weighted-outcome-index" class="level2" data-number="2.3"><h2 data-number="2.3" class="anchored" data-anchor-id="utility-weighted-outcome-index">
+<span class="header-section-number">2.3</span> Utility-weighted outcome index</h2>
+<p>To facilitate interpretation of the intervention effects, we constructed a general utility-weighted outcome index that summarises the predicted distribution over the seven outcome categories. This approach follows the general decision-theoretic principle of assigning utilities to possible outcomes and evaluating them through their expected utility <span class="citation" data-cites="berger1985">[<a href="#ref-berger1985" role="doc-biblioref">37</a>]</span>. Let <span class="math inline">\(p_{k}\left( a|X \right)\)</span> denote the posterior predicted probability of observing thermal sensation category <span class="math inline">\(k\)</span> under intervention <span class="math inline">\(a\)</span>, conditional on the specified conditioning variables <span class="math inline">\(X\)</span>. A utility-weighted index is defined as</p>
+<p><span id="eq-utily-weighted-index"><span class="math display">\[
+I\left( a|X \right) = \sum_{k}^{}{u(k)p_{k}\left( a|X \right)}
+\tag{2}\]</span></span></p>
+<p>where <span class="math inline">\(u(k)\)</span> represents a set of predefined utility weights that reflect the relative desirability or severity of each outcome category. The causal effect on the index is given by</p>
+<p><span id="eq-utily-weighted-index-diff"><span class="math display">\[
+\mathrm{\Delta}I(X) = I\left( a|X \right) - I\left( a'|X \right)
+\tag{3}\]</span></span></p>
+<p>which provides a single interpretable summary of changes in the full outcome distribution induced by the intervention.</p>
+<p>This framework allows intervention effects on a multivariate categorical outcome to be expressed on a scalar utility scale while retaining the full category-specific probability structure as the primary estimand. In this study, we applied this general framework to define a Utility-Weighted Thermal Dissatisfaction Index (UWTDI), where the utility weights were chosen to reflect the dissatisfaction associated with each thermal sensation category. Three alternative utility formulations were considered: (i) the conventional binary Fanger weighting corresponding to the classical predicted percentage dissatisfied (PPD) definition, (ii) a binary Comfort weighting corresponding to satisfaction only at thermal neutrality, and (iii) a Symmetric graded weighting that assigned progressively greater dissatisfaction penalties with increasing deviation from thermal neutrality. The utility weights are reported in <a href="#tbl-utility-weights" class="quarto-xref">Table&nbsp;2</a>. These specifications represent different ways of relating thermal sensation to dissatisfaction, rather than competing estimates of a single underlying relationship.</p>
+<div class="cell">
+<div id="tbl-utility-weights" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure"><figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-utility-weights-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2. Utility weights (bounded [0,1])
+</figcaption><div aria-describedby="tbl-utility-weights-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="cell caption-top table table-sm table-striped small">
+<thead><tr class="header">
+<th style="text-align: left;">TSV</th>
+<th style="text-align: right;">Fanger (binary)</th>
+<th style="text-align: right;">Comfort (binary)</th>
+<th style="text-align: right;">Symmetric (graded)</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">–3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">–2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.75</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">–1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.25</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.25</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.75</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+</section><section id="statistical-analysis" class="level2" data-number="2.4"><h2 data-number="2.4" class="anchored" data-anchor-id="statistical-analysis">
+<span class="header-section-number">2.4</span> Statistical analysis</h2>
+<p>Participant identifiers were unavailable in the original dataset, precluding the modelling of repeated measurements at the individual level. Consequently, the analysis was conducted using aggregated observations, with each observation represented by the counts of responses across the seven thermal sensation categories among five participants of the same biological sex for a given combination of experimental conditions. The response vector was assumed to follow a multinomial distribution:</p>
+<p><span id="eq-likelihood"><span class="math display">\[
+\mathbf{Y}_{i}\ \sim\ \text{Multinomial}\left( 5,\ \mathbf{p}_{i} \right)
+\tag{4}\]</span></span></p>
+<p>where <span class="math inline">\(\mathbf{Y}_{i}\)</span> is the vector of observed counts across the seven thermal sensation categories for observation <span class="math inline">\(i\)</span>, and <span class="math inline">\(\mathbf{p}_{i} = \left\{ p_{i, - 3},\ \ldots,\ p_{i,3} \right\}\)</span> is the corresponding vector of category probabilities.</p>
+<p>Category probabilities were estimated using a Bayesian multilevel multinomial regression model with a baseline-category logit link, with ‘comfortable’ (TSV=0) specified as the reference category. For each non-reference category <span class="math inline">\(k\)</span>,</p>
+<p><span id="eq-baseline-category-logit"><span class="math display">\[
+\log\left( \frac{p_{i,k}}{p_{i,0}} \right) = \eta_{ik}
+\tag{5}\]</span></span></p>
+<p>where the linear predictor is</p>
+<p><span id="eq-linear-predictor"><span class="math display">\[
+\begin{aligned}
+\eta_{ik} = {} &amp; \alpha_{\text{condition}\lbrack i\rbrack,\ \text{sex}\lbrack i\rbrack,k} + \beta_{\text{condition}\lbrack i\rbrack,\text{t.onset}, k}\ \text{mo}\left( {t.onset}_{i} \right) + \beta_{\text{t.day},k}\ {t.day}_{i} \\
+&amp; + \beta_{\text{temp}, k}\ {temp}_{i} + \beta_{\text{hum},k}\ {hum}_{i} + \beta_{\text{temp.hum},k}\left( {temp}_{i}{hum}_{i} \right)
+\end{aligned}
+\tag{6}\]</span></span></p>
+<p>Here, <span class="math inline">\(k\)</span> indexes the TSV category, <span class="math inline">\(\text{sex}\lbrack i\rbrack\)</span> is an index variable identifying the biological sex of observation <span class="math inline">\(i\)</span>, <span class="math inline">\(\text{condition}\lbrack i\rbrack\)</span> identifies the experimental condition, <span class="math inline">\({t.day}_{i}\)</span> is the dummy variable for time of day (afternoon/evening), <span class="math inline">\(\text{mo}\left( {t.onset}_{i} \right)\)</span> denotes the monotonic effect of time since onset, <span class="math inline">\({temp}_{i}\)</span> is centred air temperature, and <span class="math inline">\({hum}_{i}\)</span> is centred relative humidity expressed in 5% units.</p>
+<p>The condition-specific effects were decomposed into a constant (population-level) and mean-zero group-level effects:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\alpha_{\text{condition}[i],\text{sex}[i],k} &amp;= {\overline{\alpha}}_{\text{sex}[i],k} + v_{\text{condition}[i],\text{sex}[i],k} \\[6pt]
+\beta_{\text{condition}[i],\text{t.onset},k} &amp;= {\overline{\beta}}_{\text{t.onset},k} + \upsilon_{\text{condition}[i],\text{t.onset},k}
+\end{aligned}
+\]</span></p>
+<p>where <span class="math inline">\(\overline{\alpha}\)</span> and <span class="math inline">\(\overline{\beta}\)</span> represent the average effects across conditions, whereas <span class="math inline">\(v\)</span> represents the condition-specific deviations from these averages, allowing partial pooling across conditions. The varying effects were modelled jointly using a multivariate normal distribution, allowing correlations between condition-specific effects across thermal sensation categories. Posterior predicted probabilities under interventions <span class="math inline">\(a\)</span> and <span class="math inline">\(a'\)</span> were averaged across the observed experimental conditions to estimate sample-averaged category-specific CATEs, thereby accounting for the corresponding condition-specific varying effects. These estimates represent the expected intervention response across the analysed groups rather than for a specific experimental condition. Effect-modification contrasts and the utility-weighted thermal dissatisfaction index (UWTDI) were subsequently derived from these estimates.</p>
+<p>To assess alternative model specifications, candidate models were compared using approximate leave-one-out cross-validation (LOO) with Pareto-smoothed importance sampling (PSIS). Candidate models retained the same hierarchical structure but differed in the inclusion of interaction terms involving air temperature, relative humidity and biological sex. Models were evaluated based on their estimated expected log predictive density (ELPD). Predictive performance was similar across candidate models; therefore, the model including only the air temperature–relative humidity interaction was selected for causal estimation. The complete set of candidate model specifications, prior distributions and additional computational details are provided in the Supplementary Information.</p>
+<p>Data analysis was conducted in <em>R</em> <span class="citation" data-cites="rcoreteam2025">[<a href="#ref-rcoreteam2025" role="doc-biblioref">38</a>]</span> with the <em>RStudio</em> integrated development environment <span class="citation" data-cites="positsoftware2026">[<a href="#ref-positsoftware2026" role="doc-biblioref">39</a>]</span>. Data preparation and wrangling were performed using the <em>tidyverse</em> <span class="citation" data-cites="wickham2023">[<a href="#ref-wickham2023" role="doc-biblioref">40</a>]</span> and <em>data.table</em> <span class="citation" data-cites="barrett2026">[<a href="#ref-barrett2026" role="doc-biblioref">41</a>]</span> packages. Statistical models were fitted using the <em>brms</em> package <span class="citation" data-cites="bürkner2025">[<a href="#ref-b%C3%BCrkner2025" role="doc-biblioref">42</a>]</span>, with Bayesian posterior processing supported by <em>tidybayes</em> <span class="citation" data-cites="kay2024">[<a href="#ref-kay2024" role="doc-biblioref">43</a>]</span>, and compared with the <em>loo</em> package <span class="citation" data-cites="vehtari2026">[<a href="#ref-vehtari2026" role="doc-biblioref">44</a>]</span>. We diagnosed model fits and Markov Chain Monte Carlo performance using <span class="math inline">\(\widehat{R}\)</span> and reported effective samples. All diagnostics indicate good model fit. Thermal comfort-related calculations were performed using the <em>comf</em> package <span class="citation" data-cites="schweiker2024">[<a href="#ref-schweiker2024" role="doc-biblioref">45</a>]</span>, and data visualisation was supported by <em>ggplot2</em> (within tidyverse), <em>patchwork</em> <span class="citation" data-cites="pedersen2025">[<a href="#ref-pedersen2025" role="doc-biblioref">46</a>]</span> and <em>metR</em> <span class="citation" data-cites="campitelli2025">[<a href="#ref-campitelli2025" role="doc-biblioref">47</a>]</span>. Data and analysis code are available on: <a href="https://github.com"><code>https://github.com</code></a></p>
+</section></section><section id="results" class="level1" data-number="3"><h1 data-number="3">
+<span class="header-section-number">3</span> Results</h1>
+<section id="pmv-based-thermal-sensation-prediction-performance" class="level2" data-number="3.1"><h2 data-number="3.1" class="anchored" data-anchor-id="pmv-based-thermal-sensation-prediction-performance">
+<span class="header-section-number">3.1</span> PMV-based thermal sensation prediction performance</h2>
+<p>To characterise the dynamic nature of human thermal sensation, we mapped estimated thermal sensation votes (TSVs) across a continuous environmental envelope of air temperature of 18.5–28.5&nbsp;°C and relative humidity levels of 15–85%. However, since a multinomial model estimates a vector of probabilities, one for each TSV category (i.e., seven in this case), we calculated the expected value of the predicted TSV distribution as follows:</p>
+<p><span id="eq-expected-TSV"><span class="math display">\[
+\text{E}(TSV) = \sum_{k = - 3}^{3}{k}\ {p_{k}}
+\tag{7}\]</span></span></p>
+<p>where <span class="math inline">\(p_{k}\)</span> is the probability of observing TSV category <span class="math inline">\(k\)</span>, <span class="math inline">\(k \in \left\{ - 3,\ ...,\ 3 \right\}\)</span>. The resulting mean TSV provides a convenient descriptive summary, enabling direct comparison with Fanger’s predicted mean vote (PMV).</p>
+<div id="cell-fig-expected-TSV" class="cell">
+<div class="cell-output-display">
+<div id="fig-expected-TSV" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-expected-TSV-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="figures/figure-main_01.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Fig.&nbsp;1. Posterior expected TSV across exposure duration and sex. Facet matrices compare posterior expected TSV for males (left) and females (right) across a 3&nbsp;h exposure period (rows: 1.0 and 3.0&nbsp;h) as a function of air temperature and relative humidity. Background gradients represent the posterior mean TSV, calculated by fixing the time of day to afternoon. Black contour lines indicate PMV iso-comfort curves calculated assuming ta = tr, va = 0.05, Icl = 0.6, and M = {1.0, 1.1, 1.2}."><img src="figures/figure-main_01.png" class="img-fluid figure-img" style="width:60.0%"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-expected-TSV-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Fig.&nbsp;1. Posterior expected TSV across exposure duration and sex. Facet matrices compare posterior expected TSV for males (left) and females (right) across a 3&nbsp;h exposure period (rows: 1.0 and 3.0&nbsp;h) as a function of air temperature and relative humidity. Background gradients represent the posterior mean TSV, calculated by fixing the time of day to afternoon. Black contour lines indicate PMV iso-comfort curves calculated assuming ta = tr, va = 0.05, Icl = 0.6, and M = {1.0, 1.1, 1.2}.
+</figcaption></figure>
+</div>
+</div>
+</div>
+<p><a href="#fig-expected-TSV" class="quarto-xref">Fig.&nbsp;1</a> illustrates the posterior predictive mean vote across a 3-hour exposure, stratified by biological sex, with time of day fixed to afternoon (corresponding evening analyses are shown in <a href="notebooks/supplementary-material-preview.html#fig-supp-expected-TSV-evening">Fig. S1</a>). Comparing the empirical response surfaces with the overlaid PMV iso-lines reveals a nuanced relationship. Overall, the empirical regression boundaries (white lines) broadly follow the geometric orientation of the PMV contours (black lines) across much of the environmental domain. However, this agreement deteriorates at higher temperatures, where the empirical boundaries progressively diverge as relative humidity decreases. Whereas the PMV contours remain linear throughout this region, the empirical boundaries become increasingly curvilinear, exhibiting pronounced curvature at elevated temperatures. This behaviour indicates that the humidity dependence embedded within the PMV formulation fails to capture the nonlinear influence of humidity on perceived thermal sensation under warmer conditions. Both male and female cohorts exhibited systematic deviations from the PMV predictions. Assuming a met of 1.2, the resulting PMV neutrality contour (PMV = 0.0) consistently lay on the cooler side of the empirical response surfaces, indicating that participants reported cooler sensations than those predicted under the equivalent environmental conditions. This discrepancy was markedly sex-specific. For example, at a fixed relative humidity of 50%, PMV = 0 corresponds to an expected TSV of –0.59 and –0.71 for females after 1.0 and 3.0&nbsp;h, respectively, compared with –0.19 and –0.34 for males. Reducing the metabolic rate assumed in the PMV calculation partially reconciled these differences. Using 1.1 met reduced the discrepancy for males, yielding expected TSV values of 0.08 after 1.0&nbsp;h and –0.14 after 3.0&nbsp;h, whereas the corresponding values for females were –0.31 and –0.45. A further reduction to 1.0 met brought the predicted TSV for females to neutrality after 1.0&nbsp;h (–0.03), although a cool sensation remained after 3.0&nbsp;h (–0.21). For males, the corresponding TSV values were 0.34 and 0.05. Overall, female participants exhibited a larger displacement from the PMV neutral baseline and consistently lower mean TSVs than males across corresponding temperature-humidity combinations. Furthermore, at lower temperatures, the female response surfaces displayed substantially larger regions associated with colder thermal sensations, represented by the expanded deep-blue regions across all exposure durations. <a href="#fig-expected-TSV" class="quarto-xref">Fig.&nbsp;1</a> also demonstrates a systematic temporal decline in predicted thermal sensation under steady-state environmental conditions. As exposure duration increased, the posterior mean TSV consistently decreased across identical temperature and humidity combinations. Consequently, cooler response regions expanded towards progressively higher temperatures, with the blue and green zones shifting horizontally across the environmental space. This consistent displacement indicates that thermal sensation progressively shifted towards cooler perceptions over time despite constant environmental conditions. Because these two-dimensional surfaces in <a href="#fig-expected-TSV" class="quarto-xref">Fig.&nbsp;1</a> summarise only the posterior expected values, they do not convey the associated statistical uncertainty. To address this limitation, we additionally present one-dimensional conditional cross-sections at fixed relative humidity levels (30%, 50%, and 70%) as continuous functions of air temperature in the Supplementary Information (<a href="notebooks/supplementary-material-preview.html#fig-supp-expected-TSV-temperature-afternoon">Fig. S2</a> and <a href="notebooks/supplementary-material-preview.html#fig-supp-expected-TSV-temperature-evening">Fig. S3</a>).</p>
+<p>Although comparison with PMV predictions provides a descriptive assessment of thermal sensation across the environmental conditions studied, it does not directly quantify intervention-induced changes in the probability of individual thermal sensation categories. We therefore estimated conditional average treatment effects (CATEs) to formally quantify how simulated interventions redistributed TSV probabilities across environmental conditions and participant subgroups.</p>
+</section><section id="sex-specific-heterogeneity-in-intervention-responses" class="level2" data-number="3.2"><h2 data-number="3.2" class="anchored" data-anchor-id="sex-specific-heterogeneity-in-intervention-responses">
+<span class="header-section-number">3.2</span> Sex-specific heterogeneity in intervention responses</h2>
+<p>To evaluate the causal effects of temperature setpoint changes, we simulated counterfactual interventions representing two energy-saving strategies under heating and cooling operating modes. We first examined whether intervention effects were modified by biological sex, followed by analyses assessing modification by time of day. We conducted the primary sex-specific heterogeneity analysis with time of day fixed to the afternoon period; corresponding evening analyses are presented in the Supplementary Information (<a href="notebooks/supplementary-material-preview.html#fig-supp-sex-specific-prediction-evening">Fig. S4</a> and <a href="notebooks/supplementary-material-preview.html#fig-supp-sex-specific-CATE-evening">Fig. S5</a>).</p>
+<div id="cell-fig-sex-specific-prediction" class="cell">
+<div class="cell-output-display">
+<div id="fig-sex-specific-prediction" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-sex-specific-prediction-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="figures/figure-main_02.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Fig.&nbsp;2. Posterior predictive probabilities of TSV categories across exposure duration. Posterior predictive probabilities (posterior mean and 95% credible intervals) are shown for TSV categories ranging from –3 (‘cold’) to +3 (‘hot’) as a function of exposure duration (1.0, 2.0, and 3.0&nbsp;h after intervention onset). Results are stratified by biological sex (males, top rows; females, bottom rows) and environmental condition. a) Heating intervention (25.0&nbsp;°C to 23.5&nbsp;°C at 35% relative humidity). b) Cooling intervention (24.5&nbsp;°C to 26.0&nbsp;°C at 55% relative humidity). All predictions are calculated by fixing the time of day to afternoon and marginalising over varying effects across experimental groups."><img src="figures/figure-main_02.png" class="img-fluid figure-img" style="width:90.0%"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sex-specific-prediction-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Fig.&nbsp;2. Posterior predictive probabilities of TSV categories across exposure duration. Posterior predictive probabilities (posterior mean and 95% credible intervals) are shown for TSV categories ranging from –3 (‘cold’) to +3 (‘hot’) as a function of exposure duration (1.0, 2.0, and 3.0&nbsp;h after intervention onset). Results are stratified by biological sex (males, top rows; females, bottom rows) and environmental condition. a) Heating intervention (25.0&nbsp;°C to 23.5&nbsp;°C at 35% relative humidity). b) Cooling intervention (24.5&nbsp;°C to 26.0&nbsp;°C at 55% relative humidity). All predictions are calculated by fixing the time of day to afternoon and marginalising over varying effects across experimental groups.
+</figcaption></figure>
+</div>
+</div>
+</div>
+<p><a href="#fig-sex-specific-prediction" class="quarto-xref">Fig.&nbsp;2</a> a presents the posterior predictive distributions of thermal sensation votes under heating conditions (25.0&nbsp;°C and 23.5&nbsp;°C at 35% relative humidity). Lowering the temperature from 25.0&nbsp;°C to 23.5&nbsp;°C shifted the distributions towards cooler sensation categories in both sexes. For example, among females after 3.0&nbsp;h of exposure, the predicted probability of reporting ‘cold’ (TSV = –3) increased from approximately 3% at 25.0&nbsp;°C to 11% at 23.5&nbsp;°C, while the probability of a neutral sensation (TSV = 0) decreased from approximately 51% to 32%. Similar temperature-dependent shifts were observed in males, who consistently exhibited lower probabilities of cooler sensation categories, particularly ‘cold’ (TSV = –3), than females throughout the exposure period. The shift towards cooler sensations became more pronounced with increasing exposure duration, especially under the 23.5&nbsp;°C condition. <a href="#fig-sex-specific-prediction" class="quarto-xref">Fig.&nbsp;2</a> b shows the corresponding posterior predictive distributions under cooling conditions (24.5&nbsp;°C and 26.0&nbsp;°C at 55% relative humidity). Increasing the temperature from 24.5&nbsp;°C to 26.0&nbsp;°C shifted the distributions towards neutral and warmer sensation categories. For instance, among females at 3.0&nbsp;h, the predicted probability of being ‘comfortable’ (TSV = 0) increased from approximately 43% to 55%, whereas the probability of reporting ‘cool’ (TSV = –2) decreased from approximately 10% to 3%. Males exhibited a different temperature-dependent response, with consistently lower probabilities of being ‘comfortable’ and substantially higher probabilities of reporting ‘slightly warm’ (TSV = 1) and ‘warm’ (TSV = 2) than females across the exposure period. Across both environmental conditions, longer exposure durations were associated with a gradual shift towards lower thermal sensation votes, consistent with the temporal trends observed in <a href="#fig-expected-TSV" class="quarto-xref">Fig.&nbsp;1</a>. Although the predicted distributions displayed clear systematic patterns, the corresponding credible intervals were relatively wide because the marginal (sample-averaged) predictions integrate over the varying effects for experimental groups, thereby incorporating between-group variability beyond that explained by the constant effects. To quantify these temperature- and humidity-induced changes, we estimated conditional average treatment effects (CATEs) on the risk-difference scale for each TSV category. Differences in CATEs between males and females were subsequently evaluated to assess sex-specific effect modification over time.</p>
+<div id="cell-fig-sex-specific-CATE" class="cell">
+<div class="cell-output-display">
+<div id="fig-sex-specific-CATE" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-sex-specific-CATE-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="figures/figure-main_03.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Fig.&nbsp;3. Conditional average treatment effects (CATEs) of temperature interventions on TSV probabilities by sex. Posterior mean causal risk differences and 95% credible intervals are shown for TSV categories under hypothetical temperature interventions across exposure duration (1.0, 2.0, and 3.0&nbsp;h after intervention onset). a) Sex-stratified CATEs for the heating intervention (25.0&nbsp;°C to 23.5&nbsp;°C at 35% relative humidity). b) Male–female differences in CATEs for heating intervention, representing effect modification on the additive (risk-difference) scale. c) Sex-stratified CATEs for the cooling intervention (24.5&nbsp;°C to 26.0&nbsp;°C at 55% relative humidity). d) Male–female differences in CATEs for cooling intervention, representing effect modification on the additive (risk-difference) scale. All estimates are calculated by fixing the time of day to afternoon."><img src="figures/figure-main_03.png" class="img-fluid figure-img" style="width:90.0%"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sex-specific-CATE-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Fig.&nbsp;3. Conditional average treatment effects (CATEs) of temperature interventions on TSV probabilities by sex. Posterior mean causal risk differences and 95% credible intervals are shown for TSV categories under hypothetical temperature interventions across exposure duration (1.0, 2.0, and 3.0&nbsp;h after intervention onset). a) Sex-stratified CATEs for the heating intervention (25.0&nbsp;°C to 23.5&nbsp;°C at 35% relative humidity). b) Male–female differences in CATEs for heating intervention, representing effect modification on the additive (risk-difference) scale. c) Sex-stratified CATEs for the cooling intervention (24.5&nbsp;°C to 26.0&nbsp;°C at 55% relative humidity). d) Male–female differences in CATEs for cooling intervention, representing effect modification on the additive (risk-difference) scale. All estimates are calculated by fixing the time of day to afternoon.
+</figcaption></figure>
+</div>
+</div>
+</div>
+<p><a href="#fig-sex-specific-CATE" class="quarto-xref">Fig.&nbsp;3</a> presents the CATEs of the temperature interventions on the probability of each TSV category. Under the heating intervention (25.0&nbsp;°C to 23.5&nbsp;°C at 35% relative humidity; <a href="#fig-sex-specific-CATE" class="quarto-xref">Fig.&nbsp;3</a> a), reducing the temperature redistributed probability from neutral towards colder sensation categories in both sexes. Among males, the intervention increased the probability of ‘cold’ (TSV = –3) by 0.7–1.4 percentage points on average and decreased the probability of ‘comfortable’ (TSV = 0) by approximately 7–12 percentage points across the exposure period. In females, the corresponding increase in the probability of TSV = –3 was larger (4.5–8.2 percentage points on average), accompanied by reductions of approximately 15–19 percentage points in the probability of ‘comfortable’. Although the magnitude of the effects varied only modestly across the 3-h exposure period, the intervention consistently shifted probability towards colder thermal sensation categories, with larger effects observed in females. Sex-specific differences (i.e., effect modification) in the heating intervention are shown in <a href="#fig-sex-specific-CATE" class="quarto-xref">Fig.&nbsp;3</a> b. Compared with females, males exhibited a smaller increase in the probability of the coldest sensation (TSV = –3 and –2; approximately 4–7 percentage points lower) but a larger increase in the probability of TSV = –1 (approximately 6–7 percentage points higher). While most 95% credible intervals overlapped zero, the posterior distributions favoured stronger responses among females for the coldest sensation category (<span class="math inline">\(\Pr\left( \mathrm{\Delta}{CATE}_{k=-3,M - F} &lt; 0\ \right|\text{afternoon,\ 3h}) = 94.3\%\)</span>; <a href="notebooks/notebooks/supplementary-material-preview.html#tbl-supp-effect-modification-heating-direction-sex">Table S8</a>), whereas males showed correspondingly larger intervention effects for TSV = –1. Under the cooling intervention (24.5&nbsp;°C to 26.0&nbsp;°C at 55% relative humidity; <a href="#fig-sex-specific-CATE" class="quarto-xref">Fig.&nbsp;3</a> c), increasing the temperature shifted the probability distribution towards neutral and warmer sensation categories. Among males, the intervention increased the probability of reporting ‘slightly warm’ (TSV = 1) by approximately 13–14 percentage points, while reducing the probability of being ‘comfortable’ (TSV = 0). Females exhibited a different response pattern: the probability of being ‘comfortable’ decreased only minimally after 1.0&nbsp;h (–0.6%), but this trend reversed with prolonged exposure, resulting in an increase of approximately 7 percentage points after 3.0&nbsp;h. Compared with the heating intervention, the CATEs under cooling showed a clear reduction in the probabilities of colder sensation categories (TSV = –3 and –2) and an increase in warmer sensation categories (TSV = 1 and 2) for both sexes. For these categories, the estimated male–female differences were consistently smaller under cooling than under heating. In contrast, the effects on the ‘comfortable’ category were larger but accompanied by greater posterior uncertainty (<a href="#fig-sex-specific-CATE" class="quarto-xref">Fig.&nbsp;3</a> d).</p>
+</section><section id="time-of-day-heterogeneity-in-intervention-responses" class="level2" data-number="3.3"><h2 data-number="3.3" class="anchored" data-anchor-id="time-of-day-heterogeneity-in-intervention-responses">
+<span class="header-section-number">3.3</span> Time-of-day heterogeneity in intervention responses</h2>
+<p>Using the same analytical framework described for sex-specific heterogeneity, we next evaluated whether intervention-induced changes in thermal sensation probabilities varied according to time of day (predicted thermal sensation probabilities are shown in <a href="notebooks/supplementary-material-preview.html#fig-supp-day-specific-prediction-male">Fig. S6</a>).</p>
+<div id="cell-fig-day-specific-CATE" class="cell">
+<div class="cell-output-display">
+<div id="fig-day-specific-CATE" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-day-specific-CATE-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="figures/figure-main_04.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Fig.&nbsp;4. Conditional average treatment effects (CATEs) of temperature interventions on TSV probabilities by time of day. Posterior mean causal risk differences and 95% credible intervals are shown for TSV categories under hypothetical temperature interventions across exposure duration (1.0, 2.0, and 3.0&nbsp;h after intervention onset). a) Time-of-day-stratified CATEs for the heating intervention (25.0&nbsp;°C to 23.5&nbsp;°C at 35% relative humidity). b) Afternoon–evening differences in CATEs for heating intervention, representing effect modification on the additive (risk-difference) scale. c) Time-of-day-stratified CATEs for the cooling intervention (24.5&nbsp;°C to 26.0&nbsp;°C at 55% relative humidity). d) Afternoon–evening differences in CATEs for cooling intervention, representing effect modification on the additive (risk-difference) scale. All estimates are calculated by fixing biological sex to male."><img src="figures/figure-main_04.png" class="img-fluid figure-img" style="width:90.0%"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-day-specific-CATE-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Fig.&nbsp;4. Conditional average treatment effects (CATEs) of temperature interventions on TSV probabilities by time of day. Posterior mean causal risk differences and 95% credible intervals are shown for TSV categories under hypothetical temperature interventions across exposure duration (1.0, 2.0, and 3.0&nbsp;h after intervention onset). a) Time-of-day-stratified CATEs for the heating intervention (25.0&nbsp;°C to 23.5&nbsp;°C at 35% relative humidity). b) Afternoon–evening differences in CATEs for heating intervention, representing effect modification on the additive (risk-difference) scale. c) Time-of-day-stratified CATEs for the cooling intervention (24.5&nbsp;°C to 26.0&nbsp;°C at 55% relative humidity). d) Afternoon–evening differences in CATEs for cooling intervention, representing effect modification on the additive (risk-difference) scale. All estimates are calculated by fixing biological sex to male.
+</figcaption></figure>
+</div>
+</div>
+</div>
+<p>The CATE estimates for the afternoon and evening periods were very similar for both the heating and cooling interventions (<a href="#fig-day-specific-CATE" class="quarto-xref">Fig.&nbsp;4</a> a and c). Accordingly, effect modification by time of day was less pronounced than effect modification by sex for both interventions. Differences between the afternoon and evening periods were generally small (with average differences of less than 2 percentage points in absolute value; <a href="#fig-day-specific-CATE" class="quarto-xref">Fig.&nbsp;4</a> b and d), with narrower posterior uncertainty suggesting greater consistency in intervention effects across time periods. The analyses presented in <a href="#fig-day-specific-CATE" class="quarto-xref">Fig.&nbsp;4</a> were conducted with biological sex fixed to male; the corresponding analyses for females are shown in the Supplementary Information (<a href="notebooks/supplementary-material-preview.html#fig-supp-day-specific-prediction-female">Fig. S7</a> and <a href="notebooks/supplementary-material-preview.html#fig-supp-day-specific-CATE-female">Fig. S8</a>).</p>
+</section><section id="decision-oriented-thermal-comfort-evaluation" class="level2" data-number="3.4"><h2 data-number="3.4" class="anchored" data-anchor-id="decision-oriented-thermal-comfort-evaluation">
+<span class="header-section-number">3.4</span> Decision-oriented thermal comfort evaluation</h2>
+<p>Because TSV categories were modelled using a multinomial framework, category-specific probabilities are inherently interdependent, such that increases in the probability of one category necessarily correspond to decreases in the probabilities of the others. Consequently, intervention effects should be interpreted as a redistribution of probability mass across the thermal sensation spectrum rather than independent changes in individual outcome categories. Although category-specific CATEs provide detailed insight into these redistribution dynamics, interpretation across multiple TSV categories can become fragmented when evaluating the overall desirability of alternative intervention strategies. Given the smaller magnitude of time-of-day effect modification compared with sex-related effect modification, we focus on sex-related heterogeneity in the following analyses. All estimates are calculated by fixing the time of day to afternoon.</p>
+<div id="cell-fig-UWTDI-temperature" class="cell">
+<div class="cell-output-display">
+<div id="fig-UWTDI-temperature" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-UWTDI-temperature-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="figures/figure-main_05.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Fig.&nbsp;5. Posterior utility-weighted thermal dissatisfaction index (UWTDI) under alternative weighting schemes. Posterior UWTDI is shown as a function of air temperature for the Fanger, Comfort, and Symmetric weighting schemes under two relative humidity conditions (30% and 70%) and two exposure durations (1.0 and 3.0&nbsp;h). Solid coloured lines represent posterior mean UWTDI estimates for females (violet) and males (orange), with shaded bands indicating the corresponding 95% credible intervals. Black dotted, dot-dashed, and dashed lines denote PPD for metabolic rates of 1.0, 1.1, and 1.2 met, respectively. The grey horizontal dotted line marks a UWTDI of 20%, corresponding to the conventional thermal comfort criterion."><img src="figures/figure-main_05.png" class="img-fluid figure-img" style="width:60.0%"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-UWTDI-temperature-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Fig.&nbsp;5. Posterior utility-weighted thermal dissatisfaction index (UWTDI) under alternative weighting schemes. Posterior UWTDI is shown as a function of air temperature for the Fanger, Comfort, and Symmetric weighting schemes under two relative humidity conditions (30% and 70%) and two exposure durations (1.0 and 3.0&nbsp;h). Solid coloured lines represent posterior mean UWTDI estimates for females (violet) and males (orange), with shaded bands indicating the corresponding 95% credible intervals. Black dotted, dot-dashed, and dashed lines denote PPD for metabolic rates of 1.0, 1.1, and 1.2 met, respectively. The grey horizontal dotted line marks a UWTDI of 20%, corresponding to the conventional thermal comfort criterion.
+</figcaption></figure>
+</div>
+</div>
+</div>
+<p>To enable integrated evaluation of thermal responses, we summarised posterior TSV distributions using a utility-weighted thermal dissatisfaction index (UWTDI), allowing intervention effects to be expressed on a decision-relevant scale. Posterior UWTDI response curves under three alternative utility specifications (<a href="#tbl-utility-weights" class="quarto-xref">Table&nbsp;2</a>) are shown in <a href="#fig-UWTDI-temperature" class="quarto-xref">Fig.&nbsp;5</a>. Direct comparison with the PPD lines is most meaningful under the Fanger weighting scheme (<a href="#fig-UWTDI-temperature" class="quarto-xref">Fig.&nbsp;5</a>, top). At lower temperatures, the PPD calculated assuming a met of 1.2 consistently underestimates the posterior expected UWTDI at both relative humidity levels. This discrepancy increased with exposure duration and was systematically larger for females than for males. However, if we assume a metabolic rate of 1.0 met for females and 1.1 met for males, the discrepancy diminishes. At these lower temperatures, relative humidity had little apparent influence on the agreement between the PPD and the posterior expected UWTDI. In contrast, at higher temperatures, the agreement depended on relative humidity, indicating that humidity effects became evident only under warmer conditions. Using different metabolic rates to calculate the PPD had little impact compared with lower temperatures. At 30% relative humidity, the PPD overestimated the posterior expected UWTDI, with the discrepancy progressively increasing over the 3-hour exposure. In contrast, at 70% relative humidity, the PPD underestimated the posterior expectation, although this difference diminished over time. At 3.0 hours, the PPD calculated with 1.0 met and 1.1 met closely followed the posterior expected UWTDI for females and males, respectively. Across all conditions, the 95% CrIs showed substantial overlap between the male and female estimates, reflecting considerable uncertainty in the posterior expectations, particularly for males. Compared to the Fanger weighting scheme, under the Comfort weighting scheme (<a href="#fig-UWTDI-temperature" class="quarto-xref">Fig.&nbsp;5</a>, middle) resulted in a substantially higher minimum posterior expected UWTDI, increasing to approximately 60% and 40% after 1.0 and 3.0 hours, respectively. This lower bound is determined by the assigned utility weights; assigning non-zero utilities to the ‘slightly cool’ (TSV = −1) and ‘slightly warm’ (TSV = +1) categories increases the theoretical minimum expected dissatisfaction. Transitioning from the binary weights of the Fanger and Comfort scheme to the Symmetric graded weighting architectures produced smoother response curves and overall narrower posterior uncertainty intervals (<a href="#fig-UWTDI-temperature" class="quarto-xref">Fig.&nbsp;5</a> bottom). Here, the posterior expected UWTDI estimates are more closely aligned with the PPD predictions (black lines), although the slope at lower air temperatures appears to differ. In particular, the posterior expected UWTDI for males (orange lines) andfemales (violet lines) has a higher minimum than the 6% minimum predicted by PPD. For example, after 1.0 hour, the minimum posterior expected UWTDI is approximately 20%.</p>
+<p>Having established these utility-dependent thermal comfort curves, we next examined how the simulated heating and cooling interventions altered expected comfort. For clarity, <a href="#fig-UWTDI-heatmap" class="quarto-xref">Fig.&nbsp;6</a> presents results for the Fanger weighting scheme only; corresponding analyses using the alternative weighting schemes are provided in the Supplementary Information (<a href="notebooks/supplementary-material-preview.html#fig-UWTDI-heatmap-Fanger-evening">Fig. S10</a> – <a href="notebooks/supplementary-material-preview.html#fig-UWTDI-heatmap-Symmetric-female">Fig. S20</a>). Intervention trajectories were represented as directed transitions across posterior expected UWTDI landscapes (red and blue arrows).</p>
+<div id="cell-fig-UWTDI-heatmap" class="cell">
+<div class="cell-output-display">
+<div id="fig-UWTDI-heatmap" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-UWTDI-heatmap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="figures/figure-main_06.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="Fig.&nbsp;6. Posterior expected utility-weighted thermal dissatisfaction index (UWTDI) under setpoint interventions. Contours show posterior mean UWTDI under the Fanger weighting scheme as a function of air temperature and relative humidity. Red arrows indicate heating interventions (reductions in heating setpoint), whereas blue arrows indicate cooling interventions (increases in cooling setpoint). Annotated values give the posterior mean UWTDI before and after each intervention for male and female occupants across different exposure durations."><img src="figures/figure-main_06.png" class="img-fluid figure-img" style="width:90.0%"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-UWTDI-heatmap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Fig.&nbsp;6. Posterior expected utility-weighted thermal dissatisfaction index (UWTDI) under setpoint interventions. Contours show posterior mean UWTDI under the Fanger weighting scheme as a function of air temperature and relative humidity. Red arrows indicate heating interventions (reductions in heating setpoint), whereas blue arrows indicate cooling interventions (increases in cooling setpoint). Annotated values give the posterior mean UWTDI before and after each intervention for male and female occupants across different exposure durations.
+</figcaption></figure>
+</div>
+</div>
+</div>
+<p>Reducing the heating setpoint from 25.0&nbsp;°C to 23.5&nbsp;°C under 35% relative humidity (red arrows) markedly increased the posterior expected UWTDI in both sexes. Females exhibited substantially greater expected dissatisfaction than males throughout the exposure period, reaching 30.9% after 3.0 hours compared with 13.2% for males. Conversely, increasing the cooling setpoint from 24.5&nbsp;°C to 26.0&nbsp;°C at 55% relative humidity (blue arrows) reduced the posterior expected UWTDI for females but increased it for males. Females exhibited no reduction in expected dissatisfaction after 1.0&nbsp;h (12.9%), although a reduction became evident after 3.0&nbsp;h. In contrast, males showed an initial increase in expected dissatisfaction after 1.0&nbsp;h (from 10.5% to 19.8%), but this increase diminished with longer exposure.</p>
+<p>However, the two-dimensional landscapes in <a href="#fig-UWTDI-heatmap" class="quarto-xref">Fig.&nbsp;6</a> represent only the posterior expectation of UWTDI and therefore do not convey the uncertainty associated with these estimates. To characterise this uncertainty, <a href="#fig-UWTDI-distribution" class="quarto-xref">Fig.&nbsp;7</a> presents the full posterior distributions of UWTDI under the baseline and intervention setpoints, together with the posterior distributions of the intervention contrasts (<span class="math inline">\(a - a'\)</span>). For clarity, this figure presents results for the Fanger weighting scheme only; corresponding analyses using the alternative weighting schemes are provided in the Supplementary Information (<a href="notebooks/supplementary-material-preview.html#fig-UWTDI-distribution-Fanger-evening">Fig. S21</a> – <a href="notebooks/supplementary-material-preview.html#fig-UWTDI-distribution-Symmetric-evening">Fig. S25</a>).</p>
+<div id="cell-fig-UWTDI-distribution" class="cell">
+<div class="cell-output-display">
+<div id="fig-UWTDI-distribution" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-UWTDI-distribution-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="figures/figure-main_07.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="Fig.&nbsp;7. Posterior distributions of the utility-weighted thermal dissatisfaction index (UWTDI) under setpoint interventions. Posterior distributions of UWTDI are shown separately for females (violet) and males (orange) at 1.0, 2.0, and 3.0&nbsp;h after intervention onset. For the heating intervention (top), the thermostat setpoint was reduced from a' (25.0&nbsp;°C, 35% relative humidity) to a (23.5&nbsp;°C, 35% relative humidity). For the cooling intervention (bottom), the thermostat setpoint was increased from a' (24.5&nbsp;°C, 55% relative humidity) to a (26.0&nbsp;°C, 55% relative humidity). The left and middle columns show the posterior distributions under the baseline (a') and intervention (a) setpoints, respectively, whereas the right column shows the posterior distribution of the counterfactual contrast (a - a'), representing the estimated change in UWTDI attributable to the intervention. Positive values indicate an increase in UWTDI under the intervention relative to baseline, whereas negative values indicate a decrease. Vertical dotted lines indicate the reference value of 20% UWTDI (left and middle columns) and zero difference (right column), while the vertical ticks at the bottom of the plot represent the distribution means."><img src="figures/figure-main_07.png" class="img-fluid figure-img" style="width:90.0%"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-UWTDI-distribution-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Fig.&nbsp;7. Posterior distributions of the utility-weighted thermal dissatisfaction index (UWTDI) under setpoint interventions. Posterior distributions of UWTDI are shown separately for females (violet) and males (orange) at 1.0, 2.0, and 3.0&nbsp;h after intervention onset. For the heating intervention (top), the thermostat setpoint was reduced from <span class="math inline">\(a'\)</span> (25.0&nbsp;°C, 35% relative humidity) to <span class="math inline">\(a\)</span> (23.5&nbsp;°C, 35% relative humidity). For the cooling intervention (bottom), the thermostat setpoint was increased from <span class="math inline">\(a'\)</span> (24.5&nbsp;°C, 55% relative humidity) to <span class="math inline">\(a\)</span> (26.0&nbsp;°C, 55% relative humidity). The left and middle columns show the posterior distributions under the baseline (<span class="math inline">\(a'\)</span>) and intervention (<span class="math inline">\(a\)</span>) setpoints, respectively, whereas the right column shows the posterior distribution of the counterfactual contrast (<span class="math inline">\(a - a'\)</span>), representing the estimated change in UWTDI attributable to the intervention. Positive values indicate an increase in UWTDI under the intervention relative to baseline, whereas negative values indicate a decrease. Vertical dotted lines indicate the reference value of 20% UWTDI (left and middle columns) and zero difference (right column), while the vertical ticks at the bottom of the plot represent the distribution means.
+</figcaption></figure>
+</div>
+</div>
+</div>
+<p>Under the heating intervention, the posterior distributions shifted toward higher UWTDI values in both sexes, increasing the posterior probability of exceeding the 20% reference threshold. However, the magnitude of this shift differed substantially between females and males. In females, the posterior distributions of the intervention contrast (<span class="math inline">\(a - a'\)</span>) were concentrated almost entirely above zero, with mean increases in UWTDI of 14.6% after 1.0&nbsp;h and 19.2% after 3.0&nbsp;h (<a href="notebooks/supplementary-material-preview.html#tbl-supp-UWTDI-distribution-Fanger-heating-direction">Table S16</a>). Accordingly, the posterior probability that the intervention increased UWTDI, <span class="math inline">\(\Pr(\mathrm{\Delta}UWTDI &gt; 0\ | \text{ female, afternoon})\)</span>, exceeded 99.5% at all exposure durations (<a href="notebooks/supplementary-material-preview.html#tbl-supp-UWTDI-distribution-Fanger-heating-direction">Table S16</a>). Males exhibited the same overall pattern but with markedly smaller increases. The posterior means of the intervention contrast were 4.4% after 1.0&nbsp;h and 7.7% after 3.0&nbsp;h (<a href="notebooks/supplementary-material-preview.html#tbl-supp-UWTDI-distribution-Fanger-heating-direction">Table S16</a>), with the corresponding posterior probability of an increase in UWTDI, <span class="math inline">\(\Pr(\mathrm{\Delta}UWTDI &gt; 0\ | \text{ male, afternoon})\)</span>, rising from 72.8% after 1.0&nbsp;h to 94.2% after 3.0&nbsp;h (<a href="notebooks/supplementary-material-preview.html#tbl-supp-UWTDI-distribution-Fanger-heating-direction">Table S16</a>). In contrast, the cooling intervention elicited distinct temporal responses in females and males. In females, the posterior distribution of the intervention contrast (<span class="math inline">\(a - a'\)</span>) assigned substantial probability to both positive and negative values after 1.0&nbsp;h, indicating considerable uncertainty regarding the direction of the intervention effect at this early time point. By 2.0 and 3.0&nbsp;h, the posterior mass progressively shifted below zero, providing increasing evidence that the cooling intervention reduced UWTDI. This temporal pattern was reflected in the posterior probability of the intervention reducing UWTDI, <span class="math inline">\(\Pr(\mathrm{\Delta}UWTDI &lt; 0\\ | \text{ female, afternoon})\)</span>, which increased from 47.5% after 1.0&nbsp;h to 92.5% after 3.0&nbsp;h (<a href="notebooks/supplementary-material-preview.html#tbl-supp-UWTDI-distribution-Fanger-cooling-direction">Table S18</a>). In males, the response followed the opposite trajectory. After 1.0&nbsp;h, the posterior distribution of the intervention contrast was concentrated almost entirely above zero, with a mean increase in UWTDI of 9.2% and a 90.2% posterior probability that the intervention increased UWTDI (<span class="math inline">\(\Pr(\mathrm{\Delta}UWTDI &gt; 0\ | \text{ male, afternoon}\)</span>, <a href="notebooks/supplementary-material-preview.html#tbl-supp-UWTDI-distribution-Fanger-cooling-direction">Table S18</a>). With longer exposure, however, the posterior distribution shifted toward zero, indicating increasing uncertainty regarding the direction of the intervention effect. By 3.0&nbsp;h, the posterior probability that the intervention increased UWTDI had declined to 55.5% (<a href="notebooks/supplementary-material-preview.html#tbl-supp-UWTDI-distribution-Fanger-cooling-direction">Table S18</a>), suggesting limited evidence for a directional effect.</p>
+</section></section><section id="discussion" class="level1" data-number="4"><h1 data-number="4">
+<span class="header-section-number">4</span> Discussion</h1>
+<p>We present a Bayesian causal re-analysis of the laboratory experiment conducted by Nevins <em>et al</em>. in the mid-1960s <span class="citation" data-cites="nevins1966">[<a href="#ref-nevins1966" role="doc-biblioref">10</a>]</span>, which formed part of the empirical basis for the development of the PMV/PPD model <span class="citation" data-cites="fanger1970">[<a href="#ref-fanger1970" role="doc-biblioref">9</a>]</span>. Beyond providing an empirical benchmark for evaluating the PMV, the present study demonstrates how causal inference can be used to quantify the effects of environmental interventions on thermal sensation while explicitly characterising uncertainty. More importantly, it illustrates how probabilistic inference can be translated into decision-making through a utility-based dissatisfaction index. This distinction is important because statistical inference addresses what can be learned from data, whereas (engineering) decisions require selecting actions according to their expected consequences.</p>
+<p>Our analysis indicates that several assumptions embedded within the PMV may contribute to systematic discrepancies between predicted and observed thermal sensation. Using the standard metabolic rate of 1.2&nbsp;met, recommended for sedentary activity in ISO 7730:2025 <span class="citation" data-cites="internationalorganizationforstandardization">[<a href="#ref-internationalorganizationforstandardization" role="doc-biblioref">7</a>]</span>, underestimated thermal neutrality, particularly for females and during prolonged exposure (<a href="#fig-expected-TSV" class="quarto-xref">Fig.&nbsp;1</a>). Although reducing the assumed metabolic rate improved agreement with observations, no single value reconciled predictions across sexes and exposure durations. These findings are consistent with recent studies reporting that measured metabolic rates during sedentary activities are frequently lower than the standard values adopted in thermal comfort standards <span class="citation" data-cites="sabit2026 gao2023 zhai2018 nomoto2021">[<a href="#ref-sabit2026" role="doc-biblioref">48</a>–<a href="#ref-nomoto2021" role="doc-biblioref">51</a>]</span> and that females generally exhibit lower metabolic heat production than males under comparable conditions <span class="citation" data-cites="gao2023 nomoto2021">[<a href="#ref-gao2023" role="doc-biblioref">49</a>, <a href="#ref-nomoto2021" role="doc-biblioref">51</a>]</span>. Nevertheless, our findings do not support the conclusion that the observed discrepancies can be resolved simply by assigning different fixed metabolic rates to different subgroups. Indeed, the observed discrepancies are unlikely to arise solely from assumptions regarding metabolic rate. Various PMV extensions have been proposed to address these deviations by applying correction factors <span class="citation" data-cites="humphreys2002 olefanger2002 yao2009">[<a href="#ref-humphreys2002" role="doc-biblioref">52</a>–<a href="#ref-yao2009" role="doc-biblioref">54</a>]</span>. While these modifications can improve empirical agreement under specific conditions, they generally adjust PMV outputs rather than address the underlying physiological assumptions of the heat-balance model. Important limitations include simplified representations of thermoregulatory responses, particularly evaporative heat loss, where sweating is primarily linked to metabolic rate and assumed to be zero at 1.0&nbsp;met, as well as the steady-state assumption that does not account for temporal changes in physiological responses during prolonged exposure. Omidvar and Kim <span class="citation" data-cites="omidvar2020">[<a href="#ref-omidvar2020" role="doc-biblioref">55</a>]</span> proposed a modified PMV formulation incorporating a new evaporative heat-loss equation into the original model and demonstrated improved predictions of thermal sensation across independent experimental datasets. Similarly, PMV’s inability to account for dynamic physiological adaptation may contribute to deviations observed during extended exposures. Consistent with these limitations, the estimated relationship between thermal sensation, temperature and relative humidity deviated from the approximately parallel comfort contours predicted by PMV, particularly at higher temperatures (<a href="#fig-expected-TSV" class="quarto-xref">Fig.&nbsp;1</a>). A gradual decline in mean TSV over the 3.0&nbsp;h exposure was also reported by Fanger (Fig. 20, p.&nbsp;75 of <span class="citation" data-cites="fanger1970">[<a href="#ref-fanger1970" role="doc-biblioref">9</a>]</span>) using an experimental protocol closely resembling that of Nevins <em>et al</em>. <span class="citation" data-cites="nevins1966">[<a href="#ref-nevins1966" role="doc-biblioref">10</a>]</span>. Fanger attributed this temporal shift to participants entering the climate chamber with a slightly elevated activity level; however, physiological adaptation or changes in metabolic heat production during prolonged exposure cannot be excluded, as metabolic rate was not directly measured. Together, these findings suggest that discrepancies between PMV predictions and observed thermal sensation may reflect limitations in the model’s representation of both physiological heat balance and its temporal dynamics, rather than inaccuracies in assumed metabolic rate alone.</p>
+<p>The interpretation of Fanger’s experimental findings also requires consideration of his analytical approach. Although Fanger observed a temporal decline in TSV, the neutral temperatures derived from his analysis did not show statistically significant differences by sex, age group, or time of day. This apparent difference from the present findings may partly reflect differences in the analytical approach: rather than deriving neutral temperature directly from the observed relationships between TSV, temperature, and relative humidity, Fanger used the PMV comfort equation to transform experimental conditions into equivalent temperatures at a reference relative humidity. Consequently, the reported neutral temperatures were conditional upon the assumptions of the PMV heat-balance model, including its representation of evaporative heat loss and the interaction between humidity and thermoregulation. Because the original observations are no longer available, the extent to which this transformation influenced the reported conclusions cannot be determined. Additionally, differences in how the central thermal sensation category is defined may contribute to discrepancies when comparing results with Fanger’s experiments, as his original studies used ‘neutral’ rather than ‘comfortable’ as the midpoint category.</p>
+<p>A principal advantage of Nevin’s study is the availability of a large controlled experimental dataset covering a broad range of temperature and relative humidity conditions. The randomised exposure design provides a strong basis for estimating causal effects of environmental conditions on thermal sensation, while the extensive sampling enables assessment of heterogeneity in thermal responses across sexes and exposure durations. Rather than estimating only the expected thermal sensation vote, the model quantifies how environmental interventions redistribute the probabilities across all seven thermal sensation categories. Importantly, the estimated causal effects were modified by sex and time of day and varied with exposure duration, indicating that thermal responses to identical environmental conditions are not fully invariant across participant groups or over time. However, the magnitude and precision of these effect modifications varied by factor. Sex-related differences were observed, although these estimates were accompanied by greater uncertainty, whereas the effects of time of day were comparatively smaller and more certain. This uncertainty reflects the marginal nature of the predictions, which integrate over the varying effects associated with experimental groups and therefore incorporate between-group variability. The larger effects observed between males and females are consistent with established physiological differences in body composition and morphology, metabolic heat production and thermoregulatory responses <span class="citation" data-cites="greenfield2023 vellei2025 notley2017">[<a href="#ref-greenfield2023" role="doc-biblioref">17</a>, <a href="#ref-vellei2025" role="doc-biblioref">22</a>, <a href="#ref-notley2017" role="doc-biblioref">56</a>]</span>. By contrast, the higher thermal sensation observed in the evening compared with the afternoon, although small in magnitude, is consistent with circadian modulation of thermoregulatory processes. As the body prepares for sleep, core body temperature declines while skin temperature increases owing to enhanced peripheral heat dissipation, increasing sensitivity to environmental warmth under otherwise identical physical conditions <span class="citation" data-cites="edwards2025 waterhouse2007 vellei2023">[<a href="#ref-edwards2025" role="doc-biblioref">57</a>–<a href="#ref-vellei2023" role="doc-biblioref">59</a>]</span>. Furthermore, the gradual evolution of thermal sensation during the three-hour exposure suggests that steady-state models do not fully capture the temporal evolution of human thermal responses. Even under constant environmental conditions, thermal sensation continued to change over time, consistent with physiological adaptation or other time-dependent thermoregulatory processes.</p>
+<p>Our findings contribute to the literature on heterogeneity in thermal comfort by showing that thermal responses vary across biological sex and over time, including differences associated with time of day and exposure duration. These findings are broadly consistent with previous studies reporting sex-related and temporal differences in thermal responses <span class="citation" data-cites="greenfield2023 vellei2025 notley2017 edwards2025 waterhouse2007 vellei2023">[<a href="#ref-greenfield2023" role="doc-biblioref">17</a>, <a href="#ref-vellei2025" role="doc-biblioref">22</a>, <a href="#ref-notley2017" role="doc-biblioref">56</a>–<a href="#ref-vellei2023" role="doc-biblioref">59</a>]</span>, while also highlighting that the magnitude and direction of these effects may depend on the conditions and exposure periods considered. Rather than interpreting heterogeneity solely according to whether <em>p</em>-values cross conventional significance thresholds, Bayesian inference provides a direct representation of uncertainty through posterior distributions, allowing the magnitude and probability of plausible effects to be evaluated and interpreted in relation to their potential consequences for thermal comfort. This distinction is important because statistical evidence for a difference does not by itself establish its practical importance, while an uncertain estimate does not necessarily imply that an effect is negligible.</p>
+<p>More fundamentally, statistical inference and decision-making address different scientific questions. Statistical inference concerns drawing conclusions about unknown quantities from observed data while quantifying the associated uncertainty. Decision-making, by contrast, requires selecting actions according to their expected benefits and costs. In the present study, the multinomial model estimates seven intervention-specific causal effects corresponding to the seven thermal sensation categories. Although these probabilities fully describe the expected response, interpreting multiple probability distributions simultaneously is difficult in practice. We therefore introduced a utility-weighted dissatisfaction index that summarises the posterior predictive distribution into a single decision-relevant quantity while preserving uncertainty propagated from the Bayesian model. This separates inference from decision-making: the Bayesian model estimates the likely consequences of alternative interventions, whereas the utility function specifies how those consequences are valued for a particular application. Different stakeholders may reasonably adopt different utility functions depending on their objectives, for example prioritising occupant comfort, energy consumption or vulnerable populations, without requiring the underlying statistical model to be reformulated.</p>
+<p>The proposed index can be interpreted in a manner analogous to PPD, providing a familiar metric for practitioners. Unlike PPD, however, it is represented by a posterior distribution rather than a single deterministic curve, explicitly quantifying uncertainty in expected dissatisfaction. This distinction is important because different PPD curves have been reported in the literature <span class="citation" data-cites="vanhoof2008">[<a href="#ref-vanhoof2008" role="doc-biblioref">60</a>]</span>, yet these formulations are generally presented as fixed relationships without uncertainty in the estimated response. Recent analyses of the ASHRAE Global Thermal Comfort Database II suggest that part of the uncertainty in PMV–PPD predictions arises from using PMV as an intermediate predictor of thermal sensation rather than from the sensation–dissatisfaction relationship itself <span class="citation" data-cites="cheung2019">[<a href="#ref-cheung2019" role="doc-biblioref">23</a>]</span>. When observed TSVs are used directly, dissatisfaction predictions show better agreement with observations than when PMV-derived values are used. The original PPD formulation was derived from observed thermal sensation responses and linked to PMV by assuming that the temperature of minimum dissatisfaction corresponds to PMV = 0, thereby embedding the assumptions of the PMV heat-balance model, including its simplified representation of humidity-dependent evaporative heat loss. Furthermore, it assumes a fixed mapping between thermal sensation and dissatisfaction, with votes of –1, 0, and 1 considered acceptable and more extreme votes classified as representing dissatisfaction. Although practical, this mapping may not generalise across populations because the relationship between sensation and dissatisfaction can vary with individual characteristics, expectations, and exposure conditions. Rather than viewing alternative PPD curves as competing deterministic models, the posterior uncertainty associated with the UWTDI and the different weights (<a href="#fig-UWTDI-temperature" class="quarto-xref">Fig.&nbsp;5</a>) encompasses much of the variability reported previously, suggesting that differences among published PPD curves may partly reflect individual variability in how thermal sensation translates into perceived dissatisfaction or acceptability.</p>
+<p>Beyond providing a summary measure of dissatisfaction, the utility-weighted index enables evaluation of the consequences of practical interventions across occupant groups. The heating and cooling interventions considered in this study, corresponding to reduced heating setpoints and increased cooling setpoints, align with behavioural changes recommended to reduce building energy demand <span class="citation" data-cites="internationalenergyagency2021">[<a href="#ref-internationalenergyagency2021" role="doc-biblioref">25</a>]</span>. However, the posterior distributions of the utility-weighted index indicate that identical environmental interventions can yield different thermal outcomes among occupants. Given the conditions analysed, both heating and cooling interventions showed sex-dependent effects. Females experienced greater dissatisfaction with reductions in heating setpoints, while evidence for a beneficial effect of higher cooling setpoints increased over time. In males, higher cooling setpoints initially increased dissatisfaction, but this effect diminished with prolonged exposure (<a href="#fig-UWTDI-heatmap" class="quarto-xref">Fig.&nbsp;6</a> and <a href="#fig-UWTDI-distribution" class="quarto-xref">Fig.&nbsp;7</a>). These findings highlight the importance of accounting for heterogeneous thermal responses when evaluating energy-saving measures, as strategies that assume uniform responses across occupants may lead to unequal comfort outcomes among groups. More broadly, accounting for such variability is important for improving thermal equity.</p>
+<section id="limitations" class="level2" data-number="4.1"><h2 data-number="4.1" class="anchored" data-anchor-id="limitations">
+<span class="header-section-number">4.1</span> Limitations</h2>
+<p>Several limitations should be acknowledged. The analysis is based on historical laboratory experiments conducted during the winter season with college-age participants under controlled conditions. While these conditions provide strong internal validity for estimating causal effects, the extent to which the findings generalise to contemporary buildings, other age groups, or different seasonal contexts remains to be established. For example, the assumed clothing insulation level of 0.6&nbsp;clo may not fully represent clothing conditions in real-world winter heating scenarios, where occupants commonly wear higher-insulation clothing. Nevertheless, the controlled clothing condition enables meaningful comparison of relative thermal responses, including sex-related differences, under standardised exposure conditions. The estimated intervention effects correspond to changes in heating and cooling setpoints rather than directly imposed changes in air temperature and relative humidity, so their interpretation is conditional on the environmental responses generated by the experimental climate chamber. Similarly, the estimated causal effects are specific to the heating and cooling system used in the experiment; alternative HVAC systems or control strategies may produce different thermal outcomes under equivalent setpoint interventions. In addition, physiological variables such as metabolic rate, skin blood flow, and sweating rate were not measured directly, limiting mechanistic interpretation of the observed temporal changes in thermal sensation. Although time of day was included as a blocking factor in the experimental design, circadian processes are inherently cyclical and may not be fully captured by a categorical representation of time. Finally, the analysis used aggregated group-level responses, with each observation representing the responses of multiple participants rather than individual measurements. The estimated causal effects therefore describe average responses within the analysed groups and should not be interpreted as predictions of individual thermal responses.</p>
+</section></section><section id="conclusion" class="level1" data-number="5"><h1 data-number="5">
+<span class="header-section-number">5</span> Conclusion</h1>
+<p>This study demonstrates how Bayesian causal inference can extend thermal comfort analysis beyond estimating average responses by quantifying how environmental interventions change the probability distribution of thermal sensations and translating these effects into decision-relevant metrics. Re-analysis of the Nevins <em>et al</em>. dataset showed that PMV assumptions, including fixed metabolic rates and simplified representations of thermoregulatory responses, may contribute to systematic deviations between predicted and observed thermal sensation. The results further demonstrate that thermal responses are not fully invariant across occupants or over time: identical changes in heating and cooling setpoints produced different outcomes across sexes and exposure durations. These findings highlight that energy-saving strategies based on uniform thermal responses may lead to unequal comfort outcomes among occupant groups, emphasising the importance of considering heterogeneity when designing future comfort models and building operation strategies.</p>
+<p>Future research should extend this framework using contemporary datasets, broader participant samples, and direct physiological measurements to better characterise the mechanisms underlying individual and temporal variability in thermal responses. Further work should also investigate how population-level causal estimates can be integrated with occupant-specific information to support more adaptive and personalised thermal management strategies while balancing comfort, energy consumption, and thermal equity.</p>
+<section id="acknowledgements" class="level3 unnumbered unlisted"><h3 class="unnumbered unlisted anchored" data-anchor-id="acknowledgements">Acknowledgements</h3>
+<p>This work was supported by funding from EPFL.</p>
+</section><section id="references" class="level3 unnumbered"><h3 class="unnumbered anchored" data-anchor-id="references">References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-kim2018" class="csl-entry" role="listitem">
+[1] Kim, J., Schiavon, S., Brager, G., 2018. Personal comfort models <span></span> a new paradigm in thermal comfort for occupant-centric environmental control. Building and Environment 132, 114124. <a href="https://doi.org/10.1016/j.buildenv.2018.01.023">https://doi.org/10.1016/j.buildenv.2018.01.023</a>
+</div>
+<div id="ref-kramer2023" class="csl-entry" role="listitem">
+[2] Kramer, T., Garcia-Hansen, V., Omrani, S., Zhou, J., Chen, D., 2023. Personal differences in thermal comfort perception: Observations from a field study in brisbane, australia. Building and Environment 245, 110873. <a href="https://doi.org/10.1016/j.buildenv.2023.110873">https://doi.org/10.1016/j.buildenv.2023.110873</a>
+</div>
+<div id="ref-bogatu2023" class="csl-entry" role="listitem">
+[3] Bogatu, D.-I., Shinoda, J., Aguilera, J.J., Olesen, B.W., Watanabe, F., Kaneko, Y., Kazanci, O.B., 2023. Human physiology for personal thermal comfort-based HVAC control <span></span> a review. Building and Environment 240, 110418. <a href="https://doi.org/10.1016/j.buildenv.2023.110418">https://doi.org/10.1016/j.buildenv.2023.110418</a>
+</div>
+<div id="ref-arakawamartins2022" class="csl-entry" role="listitem">
+[4] Arakawa Martins, L., Soebarto, V., Williamson, T., 2022. A systematic review of personal thermal comfort models. Building and Environment 207, 108502. <a href="https://doi.org/10.1016/j.buildenv.2021.108502">https://doi.org/10.1016/j.buildenv.2021.108502</a>
+</div>
+<div id="ref-carlsson2021" class="csl-entry" role="listitem">
+[5] Carlsson, A., Davidsson, J., Linder, A., Svensson, M.Y., 2021. Design and evaluation of the initial 50th percentile female prototype rear impact dummy, BioRID P50F <span></span> indications for the need of an additional dummy size. Frontiers in Bioengineering and Biotechnology 9. <a href="https://doi.org/10.3389/fbioe.2021.687058">https://doi.org/10.3389/fbioe.2021.687058</a>
+</div>
+<div id="ref-inclusiv" class="csl-entry" role="listitem">
+[6] <a href="https://genderedinnovations.stanford.edu/case-studies/crash.html">Inclusive crash test dummies: Rethinking standards and reference models</a>, n.d.
+</div>
+<div id="ref-internationalorganizationforstandardization" class="csl-entry" role="listitem">
+[7] International Organization for Standardization, n.d. Ergonomics of the thermal environment <span></span> analytical determination and interpretation of thermal comfort using calculation of the PMV and PPD indices and local thermal comfort criteria (ISO 7730:2025).
+</div>
+<div id="ref-americannationalstandardsinstituteamericansocietyofheatingrefrigeratingandair-conditioningengineers" class="csl-entry" role="listitem">
+[8] American National Standards Institute &amp; American Society of Heating, Refrigerating and Air-Conditioning Engineers, n.d. Thermal environmental conditions for human occupancy (ANSI/ASHRAE standard 55:2023).
+</div>
+<div id="ref-fanger1970" class="csl-entry" role="listitem">
+[9] Fanger, P.O., 1970. Thermal comfort. Analysis and applications in environmental engineering. Danish Technical Press, Copenhagen.
+</div>
+<div id="ref-nevins1966" class="csl-entry" role="listitem">
+[10] Nevins, R.G., Rohles, F.H., Springer, W., Feyerherm, A.M., 1966. Temperature-humidity chart for themal comfort of seated persons. ASHRAE Transactions 72, 283291.
+</div>
+<div id="ref-favero2023" class="csl-entry" role="listitem">
+[11] Favero, M., Luparelli, A., Carlucci, S., 2023. Analysis of subjective thermal comfort data: A statistical point of view. Energy and Buildings 281, 112755. <a href="https://doi.org/10.1016/j.enbuild.2022.112755">https://doi.org/10.1016/j.enbuild.2022.112755</a>
+</div>
+<div id="ref-favero2024" class="csl-entry" role="listitem">
+[12] Favero, M., Carlucci, S., Chinazzo, G., Møller, J.K., Schweiker, M., Vellei, M., Sonta, A., 2024. Ten questions concerning statistical data analysis in human-centric buildings research: A focus on thermal comfort investigations. Building and Environment 264, 111903. <a href="https://doi.org/10.1016/j.buildenv.2024.111903">https://doi.org/10.1016/j.buildenv.2024.111903</a>
+</div>
+<div id="ref-rupp2015" class="csl-entry" role="listitem">
+[13] Rupp, R.F., Vásquez, N.G., Lamberts, R., 2015. A review of human thermal comfort in the built environment. Energy and Buildings 105, 178205. <a href="https://doi.org/10.1016/j.enbuild.2015.07.047">https://doi.org/10.1016/j.enbuild.2015.07.047</a>
+</div>
+<div id="ref-mishra2013" class="csl-entry" role="listitem">
+[14] Mishra, A.K., Ramgopal, M., 2013. Field studies on human thermal comfort <span></span> an overview. Building and Environment 64, 94106. <a href="https://doi.org/10.1016/j.buildenv.2013.02.015">https://doi.org/10.1016/j.buildenv.2013.02.015</a>
+</div>
+<div id="ref-schweiker2018" class="csl-entry" role="listitem">
+[15] Schweiker, M., Huebner, G.M., Kingma, B.R.M., Kramer, R., Pallubinsky, H., 2018. Drivers of diversity in human thermal perception <span></span> a review for holistic comfort models. Temperature 5, 308342. <a href="https://doi.org/10.1080/23328940.2018.1534490">https://doi.org/10.1080/23328940.2018.1534490</a>
+</div>
+<div id="ref-karjalainen2012" class="csl-entry" role="listitem">
+[16] Karjalainen, S., 2012. Thermal comfort and gender: A literature review. Indoor Air 22, 96109. <a href="https://doi.org/10.1111/j.1600-0668.2011.00747.x">https://doi.org/10.1111/j.1600-0668.2011.00747.x</a>
+</div>
+<div id="ref-greenfield2023" class="csl-entry" role="listitem">
+[17] Greenfield, A.M., Alba, B.K., Giersch, G.E.W., Seeley, A.D., 2023. Sex differences in thermal sensitivity and perception: Implications for behavioral and autonomic thermoregulation. Physiology &amp; Behavior 263, 114126. <a href="https://doi.org/10.1016/j.physbeh.2023.114126">https://doi.org/10.1016/j.physbeh.2023.114126</a>
+</div>
+<div id="ref-rupp2023" class="csl-entry" role="listitem">
+[18] Rupp, R.F., Piil, J.F., Cubel, C., Nybo, L., Toftum, J., 2023. Implications of lower indoor temperatures <span></span> not cool for cold susceptible individuals across both sexes. Energy and Buildings 284, 112829. <a href="https://doi.org/10.1016/j.enbuild.2023.112829">https://doi.org/10.1016/j.enbuild.2023.112829</a>
+</div>
+<div id="ref-nagashima2002" class="csl-entry" role="listitem">
+[19] Nagashima, K., Yoda, T., Yagishita, T., Taniguchi, A., Hosono, T., Kanosue, K., 2002. Thermal regulation and comfort during a mild-cold exposure in young japanese women complaining of unusual coldness. Journal of Applied Physiology 92, 10291035. <a href="https://doi.org/10.1152/japplphysiol.00399.2001">https://doi.org/10.1152/japplphysiol.00399.2001</a>
+</div>
+<div id="ref-kim2013" class="csl-entry" role="listitem">
+[20] Kim, J., Dear, R. de, Cândido, C., Zhang, H., Arens, E., 2013. Gender differences in office occupant perception of indoor environmental quality (IEQ). Building and Environment 70, 245256. <a href="https://doi.org/10.1016/j.buildenv.2013.08.022">https://doi.org/10.1016/j.buildenv.2013.08.022</a>
+</div>
+<div id="ref-cankar2000" class="csl-entry" role="listitem">
+[21] Cankar, K., Finderle, Ž., Štrucl, M., 2000. Gender differences in cutaneous laser doppler flow response to local direct and contralateral cooling. Journal of Vascular Research 37, 183188. <a href="https://doi.org/10.1159/000025729">https://doi.org/10.1159/000025729</a>
+</div>
+<div id="ref-vellei2025" class="csl-entry" role="listitem">
+[22] Vellei, M., Pallubinsky, H., Khovalyg, D., Carter, S., Chinazzo, G., 2025. Do women feel colder by nature? A systematic literature review and meta-analysis of sex differences in physiological and subjective thermal responses. Building and Environment 277, 112936. <a href="https://doi.org/10.1016/j.buildenv.2025.112936">https://doi.org/10.1016/j.buildenv.2025.112936</a>
+</div>
+<div id="ref-cheung2019" class="csl-entry" role="listitem">
+[23] Cheung, T., Schiavon, S., Parkinson, T., Li, P., Brager, G., 2019. Analysis of the accuracy on PMV <span></span> PPD model using the ASHRAE global thermal comfort database II. Building and Environment 153, 205217. <a href="https://doi.org/10.1016/j.buildenv.2019.01.055">https://doi.org/10.1016/j.buildenv.2019.01.055</a>
+</div>
+<div id="ref-schweiker2020" class="csl-entry" role="listitem">
+[24] Schweiker, M., André, M., Al-Atrash, F., Al-Khatri, H., Alprianti, R.R., Alsaad, H., Amin, R., Ampatzi, E., Arsano, A.Y., Azar, E., Bannazadeh, B., Batagarawa, A., Becker, S., Buonocore, C., Cao, B., Choi, J.-H., Chun, C., Daanen, H., Damiati, S.A., Daniel, L., De Vecchi, R., Dhaka, S., Domínguez-Amarillo, S., Dudkiewicz, E., Edappilly, L.P., Fernández-Agüera, J., Folkerts, M., Frijns, A., Gaona, G., Garg, V., Gauthier, S., Jabbari, S.G., Harimi, D., Hellwig, R.T., Huebner, G.M., Jin, Q., Jowkar, M., Kim, J., King, N., Kingma, B., Koerniawan, M.D., Kolarik, J., Kumar, S., Kwok, A., Lamberts, R., Laska, M., Lee, M.C.J., Lee, Y., Lindermayr, V., Mahaki, M., Marcel-Okafor, U., Marín-Restrepo, L., Marquardsen, A., Martellotta, F., Mathur, J., Mino-Rodriguez, I., Montazami, A., Mou, D., Moujalled, B., Nakajima, M., Ng, E., Okafor, M., Olweny, M., Ouyang, W., Papst de Abreu, A.L., Pérez-Fargallo, A., Rajapaksha, I., Ramos, G., Rashid, S., Reinhart, C.F., Rivera, Ma.I., Salmanzadeh, M., Schakib-Ekbatan, K., Schiavon, S., Shooshtarian, S., Shukuya, M., Soebarto, V., Suhendri, S., Tahsildoost, M., Tartarini, F., Teli, D., Tewari, P., Thapa, S., Trebilcock, M., Trojan, J., Tukur, R.B., Voelker, C., Yam, Y., Yang, L., Zapata-Lancaster, G., Zhai, Y., Zhu, Y., Zomorodian, Z., 2020. Evaluating assumptions of scales for subjective assessment of thermal environments <span></span> do laypersons perceive them the way, we researchers believe? Energy and Buildings 211, 109761. <a href="https://doi.org/10.1016/j.enbuild.2020.109761">https://doi.org/10.1016/j.enbuild.2020.109761</a>
+</div>
+<div id="ref-internationalenergyagency2021" class="csl-entry" role="listitem">
+[25] International Energy Agency, 2021. <a href="https://www.iea.org/reports/net-zero-by-2050">Net zero by 2050: A roadmap for the global energy sector</a>.
+</div>
+<div id="ref-rubin1974" class="csl-entry" role="listitem">
+[26] Rubin, D.B., 1974. Estimating causal effects of treatments in randomized and nonrandomized studies. Journal of Educational Psychology 66, 688701. <a href="https://doi.org/10.1037/h0037350">https://doi.org/10.1037/h0037350</a>
+</div>
+<div id="ref-hernán2020" class="csl-entry" role="listitem">
+[27] Hernán, M.A., Robins, J.M., 2020. <a href="https://miguelhernan.org/whatifbook">Causal inference: What if</a>. Chapman &amp; Hall/CRC.
+</div>
+<div id="ref-lundberg2021" class="csl-entry" role="listitem">
+[28] Lundberg, I., Johnson, R., Stewart, B.M., 2021. What is your estimand? Defining the target quantity connects statistical evidence to theory. American Sociological Review 86, 532565. <a href="https://doi.org/10.1177/00031224211004187">https://doi.org/10.1177/00031224211004187</a>
+</div>
+<div id="ref-kahan2024" class="csl-entry" role="listitem">
+[29] Kahan, B.C., Hindley, J., Edwards, M., Cro, S., Morris, T.P., 2024. The estimands framework: A primer on the ICH E9(R1) addendum. BMJ 384, e076316. <a href="https://doi.org/10.1136/bmj-2023-076316">https://doi.org/10.1136/bmj-2023-076316</a>
+</div>
+<div id="ref-wasserstein2016" class="csl-entry" role="listitem">
+[30] Wasserstein, R.L., Lazar, N.A., 2016. The ASA statement on p-values: Context, process, and purpose. The American Statistician 70, 129133. <a href="https://doi.org/10.1080/00031305.2016.1154108">https://doi.org/10.1080/00031305.2016.1154108</a>
+</div>
+<div id="ref-amrhein2019" class="csl-entry" role="listitem">
+[31] Amrhein, V., Greenland, S., McShane, B., 2019. Scientists rise up against statistical significance. Nature 567, 305307. <a href="https://doi.org/10.1038/d41586-019-00857-9">https://doi.org/10.1038/d41586-019-00857-9</a>
+</div>
+<div id="ref-wasserstein2019" class="csl-entry" role="listitem">
+[32] Wasserstein, R.L., Schirm, A.L., Lazar, N.A., 2019. Moving to a world beyond <span>“</span>p<span></span>&lt;<span></span>0.05<span>”</span>. The American Statistician 73, 119. <a href="https://doi.org/10.1080/00031305.2019.1583913">https://doi.org/10.1080/00031305.2019.1583913</a>
+</div>
+<div id="ref-greenland2016" class="csl-entry" role="listitem">
+[33] Greenland, S., Senn, S.J., Rothman, K.J., Carlin, J.B., Poole, C., Goodman, S.N., Altman, D.G., 2016. Statistical tests, p values, confidence intervals, and power: A guide to misinterpretations. European Journal of Epidemiology 31, 337350. <a href="https://doi.org/10.1007/s10654-016-0149-3">https://doi.org/10.1007/s10654-016-0149-3</a>
+</div>
+<div id="ref-greenland2017" class="csl-entry" role="listitem">
+[34] Greenland, S., 2017. Invited commentary: The need for cognitive science in methodology. American Journal of Epidemiology 186, 639645. <a href="https://doi.org/10.1093/aje/kwx259">https://doi.org/10.1093/aje/kwx259</a>
+</div>
+<div id="ref-goodman2008" class="csl-entry" role="listitem">
+[35] Goodman, S., 2008. A dirty dozen: Twelve p-value misconceptions. Seminars in Hematology 45, 135–140. <a href="https://doi.org/10.1053/j.seminhematol.2008.04.003">https://doi.org/10.1053/j.seminhematol.2008.04.003</a>
+</div>
+<div id="ref-rohles1970" class="csl-entry" role="listitem">
+[36] Rohles, F.H., 1970. Thermal sensations of sedentary man in moderate temperatures.
+</div>
+<div id="ref-berger1985" class="csl-entry" role="listitem">
+[37] Berger, J.O., 1985. Statistical decision theory and bayesian analysis, 2nd ed, Springer series in statistics. Springer New York, New York, NY. <a href="https://doi.org/10.1007/978-1-4757-4286-2">https://doi.org/10.1007/978-1-4757-4286-2</a>
+</div>
+<div id="ref-rcoreteam2025" class="csl-entry" role="listitem">
+[38] R Core Team, 2025. <a href="https://www.R-project.org/">R: A language and environment for statistical computing</a>. R Foundation for Statistical Computing, Vienna, Austria.
+</div>
+<div id="ref-positsoftware2026" class="csl-entry" role="listitem">
+[39] Posit Software, 2026. <a href="http://www.posit.co/">RStudio: Integrated development environment for r</a>. Posit Software, PBC, Boston, MA.
+</div>
+<div id="ref-wickham2023" class="csl-entry" role="listitem">
+[40] Wickham, H., 2023. <a href="https://cran.r-project.org/web/packages/tidyverse/index.html">Tidyverse: Easily install and load the ’tidyverse’</a>.
+</div>
+<div id="ref-barrett2026" class="csl-entry" role="listitem">
+[41] <span class="nocase">Barrett, T., Dowle, M., Srinivasan, A., Gorecki, J., Chirico, M., Hocking, T., Schwendinger, B., Krylov, I., Stetsenko, P., Short, T., Lianoglou, S., Antonyan, E., Bonsch, M., Parsonage, H., Ritchie, S., Ren, K., Tan, X., Saporta, R., Seiskari, O., Dong, X., Lang, M., Iwasaki, W., Wenchel, S., Broman, K., Schmidt, T., Arenburg, D., Smith, E., Cocquemas, F., Gomez, M., Chataignon, P., Blaser, N., Selivanov, D., Riabushenko, A., Lee, C., Groves, D., Possenriede, D., Parages, F., Toth, D., Yaramaz-David, M., Perumal, A., Sams, J., Morgan, M., Quinn, M., user), @javrucebo.(GitHub., Halperin, M., Storey, R., Saraswat, M., Jacob, M., Schubmehl, M., Vaughan, D., Silvestri, L., Hester, J., Damico, A., Freundt, S., Simons, D., Andrade, E.S. de, Miller, C., Meldgaard, J.P., Tlapak, V., Ushey, K., Eddelbuettel, D., Fischetti, T., Shilon, O., Khotilovich, V., Wickham, H., Becker, B., Haynes, K., Kamgang, B.C., Delmarcell, O., O’Brien, J., Mezquita, D., Czekanski, M., Shemetov, D., Jha, N., Wu, J., Giné-Vázquez, I., Chetia, A., Amoakohene, D., Feliz, A., Young, M., Seeto, M., Grosjean, P., Runge, V., Wia, C., Maigné, E., Rocher, V., Lulla, V., Sluga, A., Evans, B., Bruner, R., user), @badasahog.(GitHub., Thakur, V., Kumar, M., Czeller, I., Das, M., Thammisetty, T., Colombo, M., Taylor, T.</span>, 2026. <a href="https://cran.r-project.org/web/packages/data.table/index.html">Data.table: Extension of ’data.frame’</a>.
+</div>
+<div id="ref-bürkner2025" class="csl-entry" role="listitem">
+[42] Bürkner, P.-C., Gabry, J., Weber, S., Johnson, A., Modrak, M., Badr, H.S., Weber, F., Vehtari, A., Ben-Shachar, M.S., Rabel, H., Mills, S.C., Wild, S., Popov, V., Kosmidis, I., Schneider, B., Kallioinen, N., Silva, W.J., Carvalho, L., Pekin, S., 2025. <a href="https://cran.r-project.org/web/packages/brms/index.html">Brms: Bayesian regression models using ’stan’</a>.
+</div>
+<div id="ref-kay2024" class="csl-entry" role="listitem">
+[43] Kay, M., Mastny, T., 2024. <a href="https://cran.r-project.org/web/packages/tidybayes/index.html">Tidybayes: Tidy data and ’geoms’ for bayesian models</a>.
+</div>
+<div id="ref-vehtari2026" class="csl-entry" role="listitem">
+[44] Vehtari, A., Gabry, J., Magnusson, M., Yao, Y., Bürkner, P.-C., Paananen, T., Gelman, A., Goodrich, B., Piironen, J., Nicenboim, B., Lindgren, L., Kandali, V.S., Bockting, F., 2026. <a href="https://cran.r-project.org/web/packages/loo/index.html">Loo: Efficient leave-one-out cross-validation and WAIC for bayesian models</a>.
+</div>
+<div id="ref-schweiker2024" class="csl-entry" role="listitem">
+[45] Schweiker, M., Mueller, S., Kleber, M., Kingma, B., Shukuya, M., Rahman, S., Sarwar, S., 2024. <a href="https://cran.r-project.org/web/packages/comf/index.html">Comf: Models and equations for human comfort research</a>.
+</div>
+<div id="ref-pedersen2025" class="csl-entry" role="listitem">
+[46] Pedersen, T.L., 2025. <a href="https://cran.r-project.org/web/packages/patchwork/index.html">Patchwork: The composer of plots</a>.
+</div>
+<div id="ref-campitelli2025" class="csl-entry" role="listitem">
+[47] Campitelli, E., 2025. <a href="https://cran.r-project.org/web/packages/metR/index.html">metR: Tools for easier analysis of meteorological fields</a>.
+</div>
+<div id="ref-sabit2026" class="csl-entry" role="listitem">
+[48] Sabit, F., Khovalyg, D., 2026. Personalized metabolic rates vs. ISO standards, in: Zilio, C., Busato, F., Mazzarella, L., Noro, M. (Eds.),. Springer Nature Switzerland, Cham, p. 816824. <a href="https://doi.org/10.1007/978-3-032-06810-1_82">https://doi.org/10.1007/978-3-032-06810-1_82</a>
+</div>
+<div id="ref-gao2023" class="csl-entry" role="listitem">
+[49] Gao, S., Yang, L., Li, Y., Liu, S., Zhang, H., Arens, E., Zhai, Y., 2023. Gender and age effects on metabolic rates of office work, housework, and different walking speeds. Energy and Buildings 298, 113551. <a href="https://doi.org/10.1016/j.enbuild.2023.113551">https://doi.org/10.1016/j.enbuild.2023.113551</a>
+</div>
+<div id="ref-zhai2018" class="csl-entry" role="listitem">
+[50] Zhai, Y., Li, M., Gao, S., Yang, L., Zhang, H., Arens, E., Gao, Y., 2018. Indirect calorimetry on the metabolic rate of sitting, standing and walking office activities. Building and Environment 145, 7784. <a href="https://doi.org/10.1016/j.buildenv.2018.09.011">https://doi.org/10.1016/j.buildenv.2018.09.011</a>
+</div>
+<div id="ref-nomoto2021" class="csl-entry" role="listitem">
+[51] Nomoto, A., Hisayama, R., Yoda, S., Akimoto, M., Ogata, M., Tsutsumi, H., Tanabe, S., 2021. Indirect calorimetry of metabolic rate in college-age japanese subjects during various office activities. Building and Environment 199, 107909. <a href="https://doi.org/10.1016/j.buildenv.2021.107909">https://doi.org/10.1016/j.buildenv.2021.107909</a>
+</div>
+<div id="ref-humphreys2002" class="csl-entry" role="listitem">
+[52] Humphreys, M.A., Fergus Nicol, J., 2002. The validity of ISO-PMV for predicting comfort votes in every-day thermal environments. Energy and Buildings 34, 667684. <a href="https://doi.org/10.1016/S0378-7788(02)00018-X">https://doi.org/10.1016/S0378-7788(02)00018-X</a>
+</div>
+<div id="ref-olefanger2002" class="csl-entry" role="listitem">
+[53] Ole Fanger, P., Toftum, J., 2002. Extension of the PMV model to non-air-conditioned buildings in warm climates. Energy and Buildings 34, 533536. <a href="https://doi.org/10.1016/S0378-7788(02)00003-8">https://doi.org/10.1016/S0378-7788(02)00003-8</a>
+</div>
+<div id="ref-yao2009" class="csl-entry" role="listitem">
+[54] Yao, R., Li, B., Liu, J., 2009. A theoretical adaptive model of thermal comfort <span></span> adaptive predicted mean&nbsp;vote&nbsp;(aPMV). Building and Environment 44, 20892096. <a href="https://doi.org/10.1016/j.buildenv.2009.02.014">https://doi.org/10.1016/j.buildenv.2009.02.014</a>
+</div>
+<div id="ref-omidvar2020" class="csl-entry" role="listitem">
+[55] Omidvar, A., Kim, J., 2020. Modification of sweat evaporative heat loss in the PMV/PPD model to improve thermal comfort prediction in warm climates. Building and Environment 176, 106868. <a href="https://doi.org/10.1016/j.buildenv.2020.106868">https://doi.org/10.1016/j.buildenv.2020.106868</a>
+</div>
+<div id="ref-notley2017" class="csl-entry" role="listitem">
+[56] Notley, S.R., Park, J., Tagami, K., Ohnishi, N., Taylor, N.A.S., 2017. Variations in body morphology explain sex differences in thermoeffector function during compensable heat stress. Experimental Physiology 102, 545562. <a href="https://doi.org/10.1113/EP086112">https://doi.org/10.1113/EP086112</a>
+</div>
+<div id="ref-edwards2025" class="csl-entry" role="listitem">
+[57] Edwards, B.J., Gibbins, K.P., Morgan, C.J., Giacomoni, M., Robertson, C.M., Low, D.A., Pullinger, S.A., 2025. Investigating effects of moderate hyperthermia at two phases of the circadian cycle for core temperature (heat gain and peak), on quadriceps maximal voluntary contraction force. Chronobiology International 42, 622639. <a href="https://doi.org/10.1080/07420528.2025.2494631">https://doi.org/10.1080/07420528.2025.2494631</a>
+</div>
+<div id="ref-waterhouse2007" class="csl-entry" role="listitem">
+[58] Waterhouse, J., Aizawa, S., Nevill, A., Edwards, B., Weinert, D., Atkinson, G., Reilly, T., 2007. Rectal temperature, distal sweat rate, and forearm blood flow following mild exercise at two phases of the circadian cycle. Chronobiology International 24, 6385. <a href="https://doi.org/10.1080/07420520601142551">https://doi.org/10.1080/07420520601142551</a>
+</div>
+<div id="ref-vellei2023" class="csl-entry" role="listitem">
+[59] Vellei, M., Pigliautile, I., Pisello, A.L., 2023. Effect of time-of-day on human dynamic thermal perception. Scientific Reports 13, 2367. <a href="https://doi.org/10.1038/s41598-023-29615-8">https://doi.org/10.1038/s41598-023-29615-8</a>
+</div>
+<div id="ref-vanhoof2008" class="csl-entry" role="listitem">
+[60] Van Hoof, J., 2008. Forty years of fanger’s model of thermal comfort: Comfort for all? Indoor Air 18, 182201. <a href="https://doi.org/10.1111/j.1600-0668.2007.00516.x">https://doi.org/10.1111/j.1600-0668.2007.00516.x</a>
+</div>
+</div>
+</section><section id="supplementary-material" class="level3 unnumbered"><h3 class="unnumbered anchored" data-anchor-id="supplementary-material">Supplementary Material</h3>
+<ul>
+<li><a href="./notebooks/supplementary-material-preview.html">Supplementary material</a></li>
+</ul></section><section id="supporting-analyses" class="level3 unnumbered"><h3 class="unnumbered anchored" data-anchor-id="supporting-analyses">Supporting analyses</h3>
+<!-- .unlisted  -->
+<p>Additional analyses assess the assumptions and robustness of the primary model.</p>
+<ul>
+<li>
+<a href="supporting/model-development-and-specification.html">Model selection and specification</a> <!-- - [Prior predictive checks](supporting/prior-predictive-checks.html) -->
+</li>
+<li>
+<a href="supporting/posterior-predictive-checks.html">Posterior predictive checks</a> <!-- - [Model sensitivity analysis](supporting/model-sensitivity.html) -->
+</li>
+</ul>
+<!--See the [supplementary information](manuscript/supplementary-information.pdf)
+for additional figures, tables, and methodological details.--></section><section id="data-and-code-availability" class="level3 unnumbered"><h3 class="unnumbered anchored" data-anchor-id="data-and-code-availability">Data and code availability</h3>
+<!-- .unlisted  -->
+<p>The data, analysis scripts and model outputs, are available in the project repository.</p>
+</section></section><div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@article{favero2026,
+  author = {Favero, Matteo and Vellei, Marika and Sonta, Andrew},
+  title = {Ending the “Thermostat Wars”: A {Bayesian} Causal Framework
+    for Thermal Comfort Decision-Making Under Occupant Heterogeneity and
+    Uncertainty},
+  journal = {Submitted to Building and Environment},
+  date = {2026-10-31},
+  langid = {en},
+  abstract = {Human thermal responses are inherently variable and
+    difficult to predict, yet thermal comfort assessments and building
+    decisions often do not explicitly account for this heterogeneity and
+    uncertainty when evaluating environmental interventions. This study
+    investigates how Bayesian causal inference can improve thermal
+    comfort assessment by quantifying intervention effects, their
+    uncertainty, and heterogeneity in occupant responses. We applied the
+    proposed framework to data from a historical laboratory thermal
+    comfort experiment that contributed to the empirical foundation of
+    Fanger’s predicted mean vote model. We defined causal estimands for
+    hypothetical heating and cooling interventions and estimated their
+    effects on thermal sensation while accounting for heterogeneity
+    associated with biological sex, time of day, and exposure duration.
+    The results showed that assumptions embedded in the predicted mean
+    vote model, including fixed metabolic rates and steady-state
+    representations of thermoregulation, contributed to discrepancies
+    between predicted and observed thermal sensation. Thermal responses
+    were not constant across occupants or over time: identical
+    environmental interventions produced different effects by sex and
+    exposure duration. To support engineering applications, we developed
+    a utility-weighted dissatisfaction index to summarise predicted
+    dissatisfaction while preserving uncertainty from the Bayesian
+    model. This framework demonstrated that energy-saving temperature
+    adjustments may have unequal consequences for different occupant
+    groups. These findings highlight the importance of explicitly
+    quantifying uncertainty and heterogeneity when evaluating thermal
+    comfort interventions. Integrating probabilistic inference with
+    decision-oriented performance metrics provides a transparent
+    framework for building operations and design that better supports
+    energy efficiency, occupant comfort, and thermal equity.}
+}
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-favero2026" class="csl-entry quarto-appendix-citeas" role="listitem">
+[1] Favero, M., Vellei, M., Sonta, A., 2026. Ending the
+<span>“thermostat wars”</span>: a Bayesian causal framework for thermal
+comfort decision-making under occupant heterogeneity and uncertainty.
+Submitted to Building and Environment.
+</div></div></section></div></main><!-- /main column --><script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+</body></html>

@@ -1,0 +1,8 @@
+﻿TSV,Fanger (binary),Comfort (binary),Symmetric (graded)
+–3,1,1,1
+–2,1,1,0.75
+–1,0,1,0.25
+0,0,0,0
+1,0,1,0.25
+2,1,1,0.75
+3,1,1,1

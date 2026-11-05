@@ -1,0 +1,48 @@
+project:
+  type: manuscript
+  output-dir: docs
+  resources:
+    - notebooks/figures/**
+
+manuscript:
+  article: index.qmd
+#  code-links:
+#    - repo
+  notebooks:
+    - notebook: notebooks/supplementary-material.qmd
+      title: Supplementary material
+#    - notebook: notebooks/model-development-and-specification.qmd
+#      title: Model development and specification  
+#    - notebook: notebooks/prior-predictive-checks.qmd
+#      title: Prior predictive checks
+#    - notebook: notebooks/posterior-predictive-checks.qmd
+#      title: Posterior predictive checks
+#    - notebook: notebooks/model-sensitivity.qmd
+#      title: Model sensitivity analysis
+
+execute:
+  freeze: auto
+
+bibliography: references.bib
+csl: elsevier-numeric-custom.csl 
+
+crossref:
+  fig-title: "Fig."
+  fig-prefix: "Fig."
+  eq-prefix: "Eq."
+  title-delim: "."
+
+
+format:
+  html:
+    toc: true
+    number-sections: true
+    number-depth: 3
+    theme:
+      - cosmo
+    embed-resources: false
+    code-link: true
+    code-overflow: wrap
+    css: styles.css
+
+editor: visual
