@@ -1,11 +1,8 @@
 # Ending the ‘thermostat wars’: a Bayesian causal framework for thermal comfort decision-making under occupant heterogeneity and uncertainty
 
 <strong>Matteo Favero<sup>1</sup>, Marika Vellei<sup>2,3</sup>, Andrew Sonta<sup>1</sup></strong>
-
 <sup>1</sup> ETHOS Lab, École Polytechnique Fédérale de Lausanne (EPFL), Lausanne, Switzerland
-
 <sup>2</sup> Univ. Bordeaux, CNRS, Bordeaux INP, I2M, UMR 5295, F-33400, Talence, France
-
 <sup>3</sup> Arts et Metiers Institute of Technology, CNRS, Bordeaux INP, Hesam Universite, I2M, UMR 5295, F-33400 Talence, France
 
 ---
