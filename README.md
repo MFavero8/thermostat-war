@@ -18,7 +18,7 @@ This study applies Bayesian causal inference to historical laboratory thermal co
 
 ## Repository Structure
 
-The repository is organized as follows:
+The repository is organised as follows:
 
 ```         
     thermostat-war/

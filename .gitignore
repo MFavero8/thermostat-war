@@ -60,3 +60,6 @@ src/models/fitted/prior_select/*
 
 src/models/fitted/prior_weak/*
 !src/models/fitted/prior_weak/.gitkeep
+
+/.quarto/
+**/*.quarto_ipynb
